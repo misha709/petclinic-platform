@@ -1,9 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PetClinic.Owners.Contracts\PetClinic.Owners.Contracts.csproj" />
+    <ProjectReference Include="..\PetClinic.Owners.Domain\PetClinic.Owners.Domain.csproj" />
+  </ItemGroup>
 
 </Project>
