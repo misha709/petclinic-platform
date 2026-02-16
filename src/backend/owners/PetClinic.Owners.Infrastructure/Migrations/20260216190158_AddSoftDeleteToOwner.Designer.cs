@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PetClinic.Owners.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using PetClinic.Owners.Infrastructure.Persistence;
 namespace PetClinic.Owners.Infrastructure.Migrations
 {
     [DbContext(typeof(OwnersDbContext))]
-    partial class OwnersDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260216190158_AddSoftDeleteToOwner")]
+    partial class AddSoftDeleteToOwner
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

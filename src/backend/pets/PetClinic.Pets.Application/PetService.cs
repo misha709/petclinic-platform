@@ -25,6 +25,12 @@ public class PetService : IPetService
         return pets.Select(MapToDto).ToList();
     }
 
+    public async Task<IReadOnlyList<PetDto>> SearchAsync(string? query, CancellationToken cancellationToken = default)
+    {
+        var pets = await _repository.SearchAsync(query, cancellationToken);
+        return pets.Select(MapToDto).ToList();
+    }
+
     public async Task<PetDto> CreateAsync(CreatePetRequest request, CancellationToken cancellationToken = default)
     {
         if (!Enum.TryParse<PetType>(request.PetType, ignoreCase: true, out var petType))
@@ -66,6 +72,11 @@ public class PetService : IPetService
 
         var updated = await _repository.UpdateAsync(pet, cancellationToken);
         return updated is null ? null : MapToDto(updated);
+    }
+
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await _repository.DeleteAsync(id, cancellationToken);
     }
 
     private static PetDto MapToDto(Pet pet) =>

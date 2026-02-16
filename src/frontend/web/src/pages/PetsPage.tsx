@@ -3,14 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import { Plus, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { PetsTable } from '@/components/pets/PetsTable';
+import { OwnerCombobox } from '@/components/owners/OwnerCombobox';
 import { PetFormDrawer } from '@/components/pets/PetFormDrawer';
 import { DeletePetDialog } from '@/components/pets/DeletePetDialog';
 import { usePets } from '@/hooks/usePets';
@@ -99,19 +93,15 @@ export function PetsPage() {
       <div className="flex items-center gap-2">
         <div className="flex items-center gap-2 flex-1">
           <Filter className="h-4 w-4 text-muted-foreground" />
-          <Select value={selectedOwnerId} onValueChange={handleOwnerChange}>
-            <SelectTrigger className="w-[250px]">
-              <SelectValue placeholder="Select an owner" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="-1">All owners</SelectItem>
-              {owners.map((owner) => (
-                <SelectItem key={owner.id} value={owner.id}>
-                  {owner.firstName} {owner.lastName}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="w-[250px]">
+            <OwnerCombobox
+              owners={owners}
+              value={selectedOwnerId}
+              onValueChange={handleOwnerChange}
+              placeholder="Select an owner"
+              includeAllOption={true}
+            />
+          </div>
         </div>
 
         {selectedOwnerId && (

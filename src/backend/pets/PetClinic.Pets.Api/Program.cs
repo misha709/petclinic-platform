@@ -46,6 +46,14 @@ app.MapGet("/pets", async (Guid? ownerId, IPetService service, CancellationToken
 })
 .WithName("GetPetsByOwner");
 
+app.MapGet("/pets/search", async (string? query, IPetService service, CancellationToken ct) =>
+{
+    var pets = await service.SearchAsync(query, ct);
+    return Results.Ok(pets);
+})
+.WithName("SearchPets")
+.WithOpenApi();
+
 app.MapPost("/pets", async (CreatePetRequest request, IPetService service, CancellationToken ct) =>
 {
     var pet = await service.CreateAsync(request, ct);
@@ -59,5 +67,13 @@ app.MapPut("/pets/{id:guid}", async (Guid id, UpdatePetRequest request, IPetServ
     return pet is null ? Results.NotFound() : Results.Ok(pet);
 })
 .WithName("UpdatePet");
+
+app.MapDelete("/pets/{id:guid}", async (Guid id, IPetService service, CancellationToken ct) =>
+{
+    var deleted = await service.DeleteAsync(id, ct);
+    return deleted ? Results.NoContent() : Results.NotFound();
+})
+.WithName("DeletePet")
+.WithOpenApi();
 
 app.Run();

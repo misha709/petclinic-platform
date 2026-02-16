@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -20,21 +20,15 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { petSchema, type PetFormValues } from '@/lib/validations/pet';
 import type { Pet } from '@/types/models';
 import { useCreatePet, useUpdatePet } from '@/hooks/usePets';
 import { useOwners } from '@/hooks/useOwners';
 import { PetTypeSelect } from './PetTypeSelect';
+import { OwnerCombobox } from '@/components/owners/OwnerCombobox';
 import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
+import { format, parse, isValid } from 'date-fns';
 
 interface PetFormDrawerProps {
   open: boolean;
@@ -158,43 +152,102 @@ export function PetFormDrawer({ open, onOpenChange, pet, defaultOwnerId }: PetFo
             <FormField
               control={form.control}
               name="birthDate"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Birth Date</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            'w-full pl-3 text-left font-normal',
-                            !field.value && 'text-muted-foreground'
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, 'PPP')
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value || undefined}
-                        onSelect={field.onChange}
-                        disabled={(date: Date) =>
-                          date > new Date() || date < new Date('1900-01-01')
-                        }
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
+              render={({ field }) => {
+                const [open, setOpen] = useState(false);
+                const [inputValue, setInputValue] = useState(() => 
+                  field.value ? format(field.value, 'MM/dd/yyyy') : ''
+                );
+
+                // Update input value when field value changes (e.g., when editing existing pet)
+                useEffect(() => {
+                  if (field.value) {
+                    setInputValue(format(field.value, 'MM/dd/yyyy'));
+                  } else {
+                    setInputValue('');
+                  }
+                }, [field.value]);
+
+                const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                  let value = e.target.value.replace(/\D/g, '');
+                  
+                  // Apply mask MM/DD/YYYY
+                  if (value.length >= 2) {
+                    value = value.slice(0, 2) + '/' + value.slice(2);
+                  }
+                  if (value.length >= 5) {
+                    value = value.slice(0, 5) + '/' + value.slice(5, 9);
+                  }
+                  
+                  setInputValue(value);
+
+                  // Try to parse complete date
+                  if (value.length === 10) {
+                    const parsed = parse(value, 'MM/dd/yyyy', new Date());
+                    if (isValid(parsed)) {
+                      const today = new Date();
+                      const minDate = new Date('1900-01-01');
+                      if (parsed <= today && parsed >= minDate) {
+                        field.onChange(parsed);
+                      }
+                    }
+                  } else if (value.length === 0) {
+                    field.onChange(null);
+                  }
+                };
+
+                const handleCalendarSelect = (date: Date | undefined) => {
+                  field.onChange(date);
+                  if (date) {
+                    setInputValue(format(date, 'MM/dd/yyyy'));
+                  } else {
+                    setInputValue('');
+                  }
+                  setOpen(false);
+                };
+
+                return (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Birth Date</FormLabel>
+                    <Popover open={open} onOpenChange={setOpen}>
+                      <div className="relative">
+                        <FormControl>
+                          <Input
+                            placeholder="MM/DD/YYYY"
+                            value={inputValue}
+                            onChange={handleInputChange}
+                            maxLength={10}
+                          />
+                        </FormControl>
+                        <PopoverTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="absolute right-0 top-0 h-full px-3"
+                          >
+                            <CalendarIcon className="h-4 w-4 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                      </div>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          captionLayout="dropdown"
+                          selected={field.value || undefined}
+                          onSelect={handleCalendarSelect}
+                          disabled={(date: Date) =>
+                            date > new Date() || date < new Date('1900-01-01')
+                          }
+                          fromYear={1900}
+                          toYear={new Date().getFullYear()}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
             />
 
             <FormField
@@ -203,23 +256,14 @@ export function PetFormDrawer({ open, onOpenChange, pet, defaultOwnerId }: PetFo
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Owner</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select an owner" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {owners.map((owner) => (
-                        <SelectItem key={owner.id} value={owner.id}>
-                          {owner.firstName} {owner.lastName}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <OwnerCombobox
+                      owners={owners}
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      placeholder="Select an owner"
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

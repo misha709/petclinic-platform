@@ -60,4 +60,12 @@ app.MapPut("/owners/{id:guid}", async (Guid id, UpdateOwnerRequest request, IOwn
 })
 .WithName("UpdateOwner");
 
+app.MapDelete("/owners/{id:guid}", async (Guid id, IOwnerService service, CancellationToken ct) =>
+{
+    var deleted = await service.DeleteAsync(id, ct);
+    return deleted ? Results.NoContent() : Results.NotFound();
+})
+.WithName("DeleteOwner")
+.WithOpenApi();
+
 app.Run();

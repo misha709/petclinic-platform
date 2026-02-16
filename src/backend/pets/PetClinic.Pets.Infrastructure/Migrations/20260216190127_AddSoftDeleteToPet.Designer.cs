@@ -2,18 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using PetClinic.Owners.Infrastructure.Persistence;
+using PetClinic.Pets.Infrastructure.Persistence;
 
 #nullable disable
 
-namespace PetClinic.Owners.Infrastructure.Migrations
+namespace PetClinic.Pets.Infrastructure.Migrations
 {
-    [DbContext(typeof(OwnersDbContext))]
-    partial class OwnersDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(PetsDbContext))]
+    [Migration("20260216190127_AddSoftDeleteToPet")]
+    partial class AddSoftDeleteToPet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,24 +25,22 @@ namespace PetClinic.Owners.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("PetClinic.Owners.Domain.Entities.Owner", b =>
+            modelBuilder.Entity("PetClinic.Pets.Domain.Entities.Pet", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("address");
+                    b.Property<DateTime?>("BirthDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("birth_date");
 
-                    b.Property<string>("City")
+                    b.Property<string>("Breed")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
-                        .HasColumnName("city");
+                        .HasColumnName("breed");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -49,23 +50,19 @@ namespace PetClinic.Owners.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("deleted_at");
 
-                    b.Property<string>("FirstName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
-                        .HasColumnName("first_name");
+                        .HasColumnName("name");
 
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("last_name");
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("owner_id");
 
-                    b.Property<string>("Telephone")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("telephone");
+                    b.Property<int>("PetType")
+                        .HasColumnType("integer")
+                        .HasColumnName("pet_type");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -75,11 +72,9 @@ namespace PetClinic.Owners.Infrastructure.Migrations
 
                     b.HasIndex("DeletedAt");
 
-                    b.HasIndex("Telephone");
+                    b.HasIndex("OwnerId");
 
-                    b.HasIndex("LastName", "FirstName");
-
-                    b.ToTable("owners", (string)null);
+                    b.ToTable("pets", (string)null);
                 });
 #pragma warning restore 612, 618
         }

@@ -22,6 +22,21 @@ public class PetRepository : IPetRepository
             .OrderBy(p => p.Name)
             .ToListAsync(cancellationToken);
 
+    public async Task<IReadOnlyList<Pet>> SearchAsync(string? query, CancellationToken cancellationToken = default)
+    {
+        var queryable = _db.Pets.AsNoTracking();
+        if (string.IsNullOrWhiteSpace(query))
+            return await queryable.OrderBy(p => p.Name).ToListAsync(cancellationToken);
+
+        var term = query.Trim().ToLower();
+        return await queryable
+            .Where(p =>
+                EF.Functions.ILike(p.Name, $"%{term}%") ||
+                EF.Functions.ILike(p.Breed, $"%{term}%"))
+            .OrderBy(p => p.Name)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<Pet> AddAsync(Pet pet, CancellationToken cancellationToken = default)
     {
         _db.Pets.Add(pet);
@@ -44,6 +59,20 @@ public class PetRepository : IPetRepository
 
         await _db.SaveChangesAsync(cancellationToken);
         return existing;
+    }
+
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var pet = await _db.Pets
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(p => p.Id == id && p.DeletedAt == null, cancellationToken);
+
+        if (pet == null)
+            return false;
+
+        pet.DeletedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync(cancellationToken);
+        return true;
     }
 
     public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default) =>

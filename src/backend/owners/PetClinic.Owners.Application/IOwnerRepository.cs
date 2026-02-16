@@ -8,5 +8,6 @@ public interface IOwnerRepository
     Task<IReadOnlyList<Owner>> SearchAsync(string? query, CancellationToken cancellationToken = default);
     Task<Owner> AddAsync(Owner owner, CancellationToken cancellationToken = default);
     Task<Owner?> UpdateAsync(Owner owner, CancellationToken cancellationToken = default);
+    Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
     Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default);
 }

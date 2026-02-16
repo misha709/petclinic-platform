@@ -57,6 +57,11 @@ public class OwnerService : IOwnerService
         return updated is null ? null : MapToDto(updated);
     }
 
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await _repository.DeleteAsync(id, cancellationToken);
+    }
+
     private static OwnerDto MapToDto(Owner owner) =>
         new(
             owner.Id,

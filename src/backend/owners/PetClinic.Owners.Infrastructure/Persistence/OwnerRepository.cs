@@ -57,6 +57,20 @@ public class OwnerRepository : IOwnerRepository
         return existing;
     }
 
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var owner = await _db.Owners
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(o => o.Id == id && o.DeletedAt == null, cancellationToken);
+
+        if (owner == null)
+            return false;
+
+        owner.DeletedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
     public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default) =>
         await _db.Owners.AnyAsync(o => o.Id == id, cancellationToken);
 }
