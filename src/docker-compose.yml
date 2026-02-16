@@ -1,5 +1,19 @@
 name: petclinic
 services:
+  gateway:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./backend/gateway/nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - petclinic-network
+    depends_on:
+      owners-api:
+        condition: service_started
+      pets-api:
+        condition: service_started
+
   owners-db:
     image: postgres:16-alpine
     environment:
@@ -10,6 +24,8 @@ services:
       - "5432:5432"
     volumes:
       - owners-pgdata:/var/lib/postgresql/data
+    networks:
+      - petclinic-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -19,12 +35,14 @@ services:
   owners-api:
     build:
       context: .
-      dockerfile: services/owners/PetClinic.Owners.Api/Dockerfile
+      dockerfile: backend/owners/PetClinic.Owners.Api/Dockerfile
     environment:
       ConnectionStrings__OwnersDb: "Host=owners-db;Port=5432;Database=petclinic_owners;Username=postgres;Password=postgres"
       ASPNETCORE_URLS: "http://+:8080"
     ports:
       - "5080:8080"
+    networks:
+      - petclinic-network
     depends_on:
       owners-db:
         condition: service_healthy
@@ -39,6 +57,8 @@ services:
       - "5433:5432"
     volumes:
       - pets-pgdata:/var/lib/postgresql/data
+    networks:
+      - petclinic-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -48,15 +68,21 @@ services:
   pets-api:
     build:
       context: .
-      dockerfile: services/pets/PetClinic.Pets.Api/Dockerfile
+      dockerfile: backend/pets/PetClinic.Pets.Api/Dockerfile
     environment:
       ConnectionStrings__PetsDb: "Host=pets-db;Port=5432;Database=petclinic_pets;Username=postgres;Password=postgres"
       ASPNETCORE_URLS: "http://+:8080"
     ports:
       - "5081:8080"
+    networks:
+      - petclinic-network
     depends_on:
       pets-db:
         condition: service_healthy
+
+networks:
+  petclinic-network:
+    driver: bridge
 
 volumes:
   owners-pgdata:

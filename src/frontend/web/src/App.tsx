@@ -11,7 +11,7 @@ function App() {
   const [owners, setOwners] = useState<any[]>([]);
 
   useEffect(() => {
-    getJson('/api/owners-service/owners').then(setOwners);
+    getJson('http://localhost:8080/api/owners-service/owners').then(setOwners);
   }, []);
 
   return (
@@ -19,7 +19,7 @@ function App() {
       <h1>Owners</h1>
       <ul>
         {owners.map((owner) => (
-          <li key={owner.id}>{owner.name}</li>
+          <li key={owner.id}>{owner.lastName} {owner.firstName}</li>
         ))}
       </ul>
 

@@ -4,6 +4,14 @@ using PetClinic.Pets.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod();
+    });
+});
+
 builder.Services.AddPetsInfrastructure(builder.Configuration);
 builder.Services.AddScoped<IPetService, PetService>();
 
@@ -17,6 +25,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowAll");
 
 app.MapGet("/", () => "PetClinic Pets API");
 

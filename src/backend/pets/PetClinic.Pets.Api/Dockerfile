@@ -2,17 +2,17 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0-preview AS build
 WORKDIR /src
 
-COPY ["services/pets/PetClinic.Pets.Api/PetClinic.Pets.Api.csproj", "services/pets/PetClinic.Pets.Api/"]
-COPY ["services/pets/PetClinic.Pets.Application/PetClinic.Pets.Application.csproj", "services/pets/PetClinic.Pets.Application/"]
-COPY ["services/pets/PetClinic.Pets.Contracts/PetClinic.Pets.Contracts.csproj", "services/pets/PetClinic.Pets.Contracts/"]
-COPY ["services/pets/PetClinic.Pets.Domain/PetClinic.Pets.Domain.csproj", "services/pets/PetClinic.Pets.Domain/"]
-COPY ["services/pets/PetClinic.Pets.Infrastructure/PetClinic.Pets.Infrastructure.csproj", "services/pets/PetClinic.Pets.Infrastructure/"]
+COPY ["backend/pets/PetClinic.Pets.Api/PetClinic.Pets.Api.csproj", "backend/pets/PetClinic.Pets.Api/"]
+COPY ["backend/pets/PetClinic.Pets.Application/PetClinic.Pets.Application.csproj", "backend/pets/PetClinic.Pets.Application/"]
+COPY ["backend/pets/PetClinic.Pets.Contracts/PetClinic.Pets.Contracts.csproj", "backend/pets/PetClinic.Pets.Contracts/"]
+COPY ["backend/pets/PetClinic.Pets.Domain/PetClinic.Pets.Domain.csproj", "backend/pets/PetClinic.Pets.Domain/"]
+COPY ["backend/pets/PetClinic.Pets.Infrastructure/PetClinic.Pets.Infrastructure.csproj", "backend/pets/PetClinic.Pets.Infrastructure/"]
 
-RUN dotnet restore "services/pets/PetClinic.Pets.Api/PetClinic.Pets.Api.csproj"
+RUN dotnet restore "backend/pets/PetClinic.Pets.Api/PetClinic.Pets.Api.csproj"
 
-COPY services/pets/ services/pets/
+COPY backend/pets/ backend/pets/
 
-WORKDIR /src/services/pets/PetClinic.Pets.Api
+WORKDIR /src/backend/pets/PetClinic.Pets.Api
 RUN dotnet build "PetClinic.Pets.Api.csproj" -c Release -o /app/build
 
 # Publish stage
