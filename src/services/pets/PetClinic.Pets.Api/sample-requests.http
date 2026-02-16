@@ -1,0 +1,62 @@
+### PetClinic Pets API - Sample Requests
+
+@baseUrl = https://localhost:7120
+
+@ownerId = "786ff4d9-8042-4518-9828-b8319d92e13c"
+@petId = "00000000-0000-0000-0000-000000000000"  
+
+### Get API Info
+GET {{baseUrl}}/
+
+### Create Pet
+POST {{baseUrl}}/pets
+Content-Type: application/json
+
+{
+  "name": "Fluffy",
+  "petType": "Cat",
+  "breed": "Persian",
+  "ownerId": "{{ownerId}}"
+}
+
+### Create Another Pet
+POST {{baseUrl}}/pets
+Content-Type: application/json
+
+{
+  "name": "Buddy",
+  "petType": "Dog",
+  "breed": "Golden Retriever",
+  "birthDate": "2019-07-20T00:00:00Z",
+  "ownerId": "{{ownerId}}"
+}
+
+### Create Pet without Birth Date
+POST {{baseUrl}}/pets
+Content-Type: application/json
+
+{
+  "name": "Whiskers",
+  "petType": "Cat",
+  "breed": "Siamese",
+  "birthDate": null,
+  "ownerId": "{{ownerId}}"
+}
+
+### Get Pet by ID (replace {petId} with actual pet ID)
+GET {{baseUrl}}/pets/{petId}
+
+### Get Pets by Owner ID (replace {ownerId} with actual owner ID)
+GET {{baseUrl}}/pets?ownerId={{ownerId}}
+
+### Update Pet (replace {petId} with actual pet ID)
+PUT {{baseUrl}}/pets/{petId}
+Content-Type: application/json
+
+{
+  "name": "Fluffy",
+  "petType": "Cat",
+  "breed": "Persian",
+  "birthDate": "2020-03-15T00:00:00Z",
+  "ownerId": "{ownerId}"
+}

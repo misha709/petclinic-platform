@@ -1,0 +1,53 @@
+### PetClinic Owners API - Sample Requests
+@baseUrl = http://localhost:5276
+
+### Get API Info
+GET {{baseUrl}}/
+
+### Create Owner
+POST {{baseUrl}}/owners
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "address": "123 Main Street",
+  "city": "Springfield",
+  "telephone": "555-1234"
+}
+
+### Create Another Owner
+POST {{baseUrl}}/owners
+Content-Type: application/json
+
+{
+  "firstName": "Jane",
+  "lastName": "Smith",
+  "address": "456 Oak Avenue",
+  "city": "Riverside",
+  "telephone": "555-5678"
+}
+
+### Get Owner by ID (replace {id} with actual owner ID from create response)
+GET {{baseUrl}}/owners/{id}
+
+### Search Owners (no query - returns all)
+GET {{baseUrl}}/owners
+
+### Search Owners by query
+GET {{baseUrl}}/owners?query=Doe
+
+### Search Owners by telephone
+GET {{baseUrl}}/owners?query=555-1234
+
+### Update Owner (replace {id} with actual owner ID)
+PUT {{baseUrl}}/owners/{id}
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "address": "789 Updated Street",
+  "city": "Springfield",
+  "telephone": "555-9999"
+}
