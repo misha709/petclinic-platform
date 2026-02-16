@@ -1,0 +1,53 @@
+using PetClinic.Pets.Application;
+using PetClinic.Pets.Contracts;
+using PetClinic.Pets.Infrastructure;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddPetsInfrastructure(builder.Configuration);
+builder.Services.AddScoped<IPetService, PetService>();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.MapGet("/", () => "PetClinic Pets API");
+
+app.MapGet("/pets/{id:guid}", async (Guid id, IPetService service, CancellationToken ct) =>
+{
+    var pet = await service.GetByIdAsync(id, ct);
+    return pet is null ? Results.NotFound() : Results.Ok(pet);
+})
+.WithName("GetPet");
+
+app.MapGet("/pets", async (Guid? ownerId, IPetService service, CancellationToken ct) =>
+{
+    if (ownerId is null)
+        return Results.BadRequest("ownerId query parameter is required.");
+    var pets = await service.GetByOwnerIdAsync(ownerId.Value, ct);
+    return Results.Ok(pets);
+})
+.WithName("GetPetsByOwner");
+
+app.MapPost("/pets", async (CreatePetRequest request, IPetService service, CancellationToken ct) =>
+{
+    var pet = await service.CreateAsync(request, ct);
+    return Results.Created($"/pets/{pet.Id}", pet);
+})
+.WithName("CreatePet");
+
+app.MapPut("/pets/{id:guid}", async (Guid id, UpdatePetRequest request, IPetService service, CancellationToken ct) =>
+{
+    var pet = await service.UpdateAsync(id, request, ct);
+    return pet is null ? Results.NotFound() : Results.Ok(pet);
+})
+.WithName("UpdatePet");
+
+app.Run();

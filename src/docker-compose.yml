@@ -29,5 +29,35 @@ services:
       owners-db:
         condition: service_healthy
 
+  pets-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: petclinic_pets
+    ports:
+      - "5433:5432"
+    volumes:
+      - pets-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  pets-api:
+    build:
+      context: .
+      dockerfile: services/pets/PetClinic.Pets.Api/Dockerfile
+    environment:
+      ConnectionStrings__PetsDb: "Host=pets-db;Port=5432;Database=petclinic_pets;Username=postgres;Password=postgres"
+      ASPNETCORE_URLS: "http://+:8080"
+    ports:
+      - "5081:8080"
+    depends_on:
+      pets-db:
+        condition: service_healthy
+
 volumes:
   owners-pgdata:
+  pets-pgdata:
