@@ -53,10 +53,8 @@ namespace PetClinic.Pets.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("owner_id");
 
-                    b.Property<string>("PetType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<int>("PetType")
+                        .HasColumnType("integer")
                         .HasColumnName("pet_type");
 
                     b.Property<DateTime?>("UpdatedAt")

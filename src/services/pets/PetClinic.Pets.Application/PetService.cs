@@ -1,5 +1,6 @@
 using PetClinic.Pets.Contracts;
 using PetClinic.Pets.Domain.Entities;
+using PetClinic.Pets.Domain.Enums;
 
 namespace PetClinic.Pets.Application;
 
@@ -26,11 +27,16 @@ public class PetService : IPetService
 
     public async Task<PetDto> CreateAsync(CreatePetRequest request, CancellationToken cancellationToken = default)
     {
+        if (!Enum.TryParse<PetType>(request.PetType, ignoreCase: true, out var petType))
+        {
+            throw new ArgumentException($"Invalid pet type: {request.PetType}. Valid values are: {string.Join(", ", Enum.GetNames<PetType>())}", nameof(request));
+        }
+
         var pet = new Pet
         {
             Id = Guid.NewGuid(),
             Name = request.Name,
-            PetType = request.PetType,
+            PetType = petType,
             Breed = request.Breed,
             BirthDate = request.BirthDate,
             OwnerId = request.OwnerId,
@@ -46,8 +52,13 @@ public class PetService : IPetService
         if (pet is null)
             return null;
 
+        if (!Enum.TryParse<PetType>(request.PetType, ignoreCase: true, out var petType))
+        {
+            throw new ArgumentException($"Invalid pet type: {request.PetType}. Valid values are: {string.Join(", ", Enum.GetNames<PetType>())}", nameof(request));
+        }
+
         pet.Name = request.Name;
-        pet.PetType = request.PetType;
+        pet.PetType = petType;
         pet.Breed = request.Breed;
         pet.BirthDate = request.BirthDate;
         pet.OwnerId = request.OwnerId;
@@ -61,7 +72,7 @@ public class PetService : IPetService
         new(
             pet.Id,
             pet.Name,
-            pet.PetType,
+            pet.PetType.ToString(),
             pet.Breed,
             pet.BirthDate,
             pet.OwnerId,

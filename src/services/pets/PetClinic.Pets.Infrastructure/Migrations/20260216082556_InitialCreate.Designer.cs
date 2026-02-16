@@ -12,7 +12,7 @@ using PetClinic.Pets.Infrastructure.Persistence;
 namespace PetClinic.Pets.Infrastructure.Migrations
 {
     [DbContext(typeof(PetsDbContext))]
-    [Migration("20260216073028_InitialCreate")]
+    [Migration("20260216082556_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -56,10 +56,8 @@ namespace PetClinic.Pets.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("owner_id");
 
-                    b.Property<string>("PetType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                    b.Property<int>("PetType")
+                        .HasColumnType("integer")
                         .HasColumnName("pet_type");
 
                     b.Property<DateTime?>("UpdatedAt")

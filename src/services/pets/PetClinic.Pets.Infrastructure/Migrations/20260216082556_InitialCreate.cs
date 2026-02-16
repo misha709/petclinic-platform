@@ -17,7 +17,7 @@ namespace PetClinic.Pets.Infrastructure.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    pet_type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    pet_type = table.Column<int>(type: "integer", nullable: false),
                     breed = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     birth_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     owner_id = table.Column<Guid>(type: "uuid", nullable: false),

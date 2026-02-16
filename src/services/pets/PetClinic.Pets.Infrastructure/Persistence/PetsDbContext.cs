@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PetClinic.Pets.Domain.Entities;
+using PetClinic.Pets.Domain.Enums;
 
 namespace PetClinic.Pets.Infrastructure.Persistence;
 
@@ -20,7 +21,10 @@ public class PetsDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Name).HasColumnName("name").HasMaxLength(100).IsRequired();
-            entity.Property(e => e.PetType).HasColumnName("pet_type").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.PetType)
+                .HasColumnName("pet_type")
+                .IsRequired()
+                .HasConversion<int>();
             entity.Property(e => e.Breed).HasColumnName("breed").HasMaxLength(100).IsRequired();
             entity.Property(e => e.BirthDate).HasColumnName("birth_date");
             entity.Property(e => e.OwnerId).HasColumnName("owner_id");
