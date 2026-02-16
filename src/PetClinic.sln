@@ -3,31 +3,31 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "services", "services", "{5854FF58-B8C5-05C6-5BF2-ACE42193F22B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "backend", "backend", "{5854FF58-B8C5-05C6-5BF2-ACE42193F22B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "owners", "owners", "{22D8967A-3DB2-E9B0-A8E1-993F011C7EDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetClinic.Owners.Api", "services\owners\PetClinic.Owners.Api\PetClinic.Owners.Api.csproj", "{A1441D2E-2314-4633-99F9-DC4751643521}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetClinic.Owners.Api", "backend\owners\PetClinic.Owners.Api\PetClinic.Owners.Api.csproj", "{A1441D2E-2314-4633-99F9-DC4751643521}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetClinic.Owners.Application", "services\owners\PetClinic.Owners.Application\PetClinic.Owners.Application.csproj", "{3FA95E6A-ED6E-4CD3-BC04-54AEA02A899D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetClinic.Owners.Application", "backend\owners\PetClinic.Owners.Application\PetClinic.Owners.Application.csproj", "{3FA95E6A-ED6E-4CD3-BC04-54AEA02A899D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetClinic.Owners.Contracts", "services\owners\PetClinic.Owners.Contracts\PetClinic.Owners.Contracts.csproj", "{469C2B34-597C-4DFD-BD0C-FFE2D7F1A9E5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetClinic.Owners.Contracts", "backend\owners\PetClinic.Owners.Contracts\PetClinic.Owners.Contracts.csproj", "{469C2B34-597C-4DFD-BD0C-FFE2D7F1A9E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetClinic.Owners.Domain", "services\owners\PetClinic.Owners.Domain\PetClinic.Owners.Domain.csproj", "{DCE75D66-C950-4B21-AC84-D5A1C4B2E3AC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetClinic.Owners.Domain", "backend\owners\PetClinic.Owners.Domain\PetClinic.Owners.Domain.csproj", "{DCE75D66-C950-4B21-AC84-D5A1C4B2E3AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetClinic.Owners.Infrastructure", "services\owners\PetClinic.Owners.Infrastructure\PetClinic.Owners.Infrastructure.csproj", "{87EDE8AA-36D9-43F6-8E90-18994987CD95}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetClinic.Owners.Infrastructure", "backend\owners\PetClinic.Owners.Infrastructure\PetClinic.Owners.Infrastructure.csproj", "{87EDE8AA-36D9-43F6-8E90-18994987CD95}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetClinic.Pets.Api", "services\pets\PetClinic.Pets.Api\PetClinic.Pets.Api.csproj", "{68218BB2-1737-48A0-BD1F-829D84B2A0BF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetClinic.Pets.Api", "backend\pets\PetClinic.Pets.Api\PetClinic.Pets.Api.csproj", "{68218BB2-1737-48A0-BD1F-829D84B2A0BF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pets", "pets", "{E1B87901-4989-4A08-896E-DC763D84F4B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetClinic.Pets.Application", "services\pets\PetClinic.Pets.Application\PetClinic.Pets.Application.csproj", "{D0CE1F33-CB62-42D9-8E32-89057DF4F49B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetClinic.Pets.Application", "backend\pets\PetClinic.Pets.Application\PetClinic.Pets.Application.csproj", "{D0CE1F33-CB62-42D9-8E32-89057DF4F49B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetClinic.Pets.Contracts", "services\pets\PetClinic.Pets.Contracts\PetClinic.Pets.Contracts.csproj", "{676592EC-3B2B-4977-95D8-D42C39EFE90B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetClinic.Pets.Contracts", "backend\pets\PetClinic.Pets.Contracts\PetClinic.Pets.Contracts.csproj", "{676592EC-3B2B-4977-95D8-D42C39EFE90B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetClinic.Pets.Domain", "services\pets\PetClinic.Pets.Domain\PetClinic.Pets.Domain.csproj", "{452D8B0E-C972-4C6D-B3BD-DC5F4D9C7DB3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetClinic.Pets.Domain", "backend\pets\PetClinic.Pets.Domain\PetClinic.Pets.Domain.csproj", "{452D8B0E-C972-4C6D-B3BD-DC5F4D9C7DB3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetClinic.Pets.Infrastructure", "services\pets\PetClinic.Pets.Infrastructure\PetClinic.Pets.Infrastructure.csproj", "{19502D59-CA03-47E7-90F2-48576D7E8839}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetClinic.Pets.Infrastructure", "backend\pets\PetClinic.Pets.Infrastructure\PetClinic.Pets.Infrastructure.csproj", "{19502D59-CA03-47E7-90F2-48576D7E8839}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
