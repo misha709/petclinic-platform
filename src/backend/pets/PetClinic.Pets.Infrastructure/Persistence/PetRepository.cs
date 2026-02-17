@@ -16,15 +16,13 @@ public class PetRepository : IPetRepository
     public async Task<Pet?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
         await _db.Pets.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
 
-    public async Task<IReadOnlyList<Pet>> GetByOwnerIdAsync(Guid ownerId, CancellationToken cancellationToken = default) =>
-        await _db.Pets.AsNoTracking()
-            .Where(p => p.OwnerId == ownerId)
-            .OrderBy(p => p.Name)
-            .ToListAsync(cancellationToken);
-
-    public async Task<IReadOnlyList<Pet>> SearchAsync(string? query, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Pet>> SearchAsync(string? query, Guid? ownerId, CancellationToken cancellationToken = default)
     {
         var queryable = _db.Pets.AsNoTracking();
+
+        if (ownerId is not null)
+            queryable = queryable.Where(p => p.OwnerId == ownerId);
+
         if (string.IsNullOrWhiteSpace(query))
             return await queryable.OrderBy(p => p.Name).ToListAsync(cancellationToken);
 

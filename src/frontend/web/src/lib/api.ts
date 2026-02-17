@@ -55,8 +55,12 @@ export const ownersApi = {
 
 // Pet API
 export const petsApi = {
-  getByOwnerId: async (ownerId: string): Promise<Pet[]> => {
-    return fetchJson<Pet[]>(`${API_BASE}/pets-service/pets?ownerId=${ownerId}`);
+  getAll: async (ownerId?: string, query?: string): Promise<Pet[]> => {
+    const url = new URL(`${API_BASE}/pets-service/pets`);
+    if (ownerId && ownerId !== '-1') url.searchParams.set('ownerId', ownerId); // TODO review better way to handle this && ownerId !== '-1'
+    if (query) url.searchParams.set('query', query);
+
+    return fetchJson<Pet[]>(url.toString());
   },
 
   getById: async (id: string): Promise<Pet> => {

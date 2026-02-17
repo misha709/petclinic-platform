@@ -3,11 +3,10 @@ import { petsApi } from '@/lib/api';
 import type { CreatePetRequest, UpdatePetRequest } from '@/types/models';
 import { toast } from 'sonner';
 
-export function usePets(ownerId?: string) {
+export function usePets(ownerId?: string, query?: string) {
   return useQuery({
-    queryKey: ['pets', ownerId],
-    queryFn: () => petsApi.getByOwnerId(ownerId!),
-    enabled: !!ownerId,
+    queryKey: ['pets', ownerId, query],
+    queryFn: () => petsApi.getAll(ownerId, query)
   });
 }
 

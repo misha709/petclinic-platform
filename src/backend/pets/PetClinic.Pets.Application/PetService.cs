@@ -19,15 +19,9 @@ public class PetService : IPetService
         return pet is null ? null : MapToDto(pet);
     }
 
-    public async Task<IReadOnlyList<PetDto>> GetByOwnerIdAsync(Guid ownerId, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<PetDto>> SearchAsync(string? query, Guid? ownerId, CancellationToken cancellationToken = default)
     {
-        var pets = await _repository.GetByOwnerIdAsync(ownerId, cancellationToken);
-        return pets.Select(MapToDto).ToList();
-    }
-
-    public async Task<IReadOnlyList<PetDto>> SearchAsync(string? query, CancellationToken cancellationToken = default)
-    {
-        var pets = await _repository.SearchAsync(query, cancellationToken);
+        var pets = await _repository.SearchAsync(query, ownerId, cancellationToken);
         return pets.Select(MapToDto).ToList();
     }
 

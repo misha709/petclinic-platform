@@ -37,22 +37,12 @@ app.MapGet("/pets/{id:guid}", async (Guid id, IPetService service, CancellationT
 })
 .WithName("GetPet");
 
-app.MapGet("/pets", async (Guid? ownerId, IPetService service, CancellationToken ct) =>
+app.MapGet("/pets", async (string? query, Guid? ownerId, IPetService service, CancellationToken ct) =>
 {
-    if (ownerId is null)
-        return Results.BadRequest("ownerId query parameter is required.");
-    var pets = await service.GetByOwnerIdAsync(ownerId.Value, ct);
+    var pets = await service.SearchAsync(query, ownerId, ct);
     return Results.Ok(pets);
 })
-.WithName("GetPetsByOwner");
-
-app.MapGet("/pets/search", async (string? query, IPetService service, CancellationToken ct) =>
-{
-    var pets = await service.SearchAsync(query, ct);
-    return Results.Ok(pets);
-})
-.WithName("SearchPets")
-.WithOpenApi();
+.WithName("GetPets");
 
 app.MapPost("/pets", async (CreatePetRequest request, IPetService service, CancellationToken ct) =>
 {
@@ -73,7 +63,6 @@ app.MapDelete("/pets/{id:guid}", async (Guid id, IPetService service, Cancellati
     var deleted = await service.DeleteAsync(id, ct);
     return deleted ? Results.NoContent() : Results.NotFound();
 })
-.WithName("DeletePet")
-.WithOpenApi();
+.WithName("DeletePet");
 
 app.Run();

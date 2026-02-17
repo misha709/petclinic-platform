@@ -22,7 +22,7 @@ export function PetsPage() {
   );
 
   const { data: owners = [] } = useOwners();
-  const { data: pets = [], isLoading } = usePets(selectedOwnerId || undefined);
+  const { data: pets = [], isLoading } = usePets(selectedOwnerId, searchQuery);
 
   // Update selected owner when URL changes
   useEffect(() => {
@@ -31,18 +31,6 @@ export function PetsPage() {
       setSelectedOwnerId(ownerIdFromUrl);
     }
   }, [searchParams]);
-
-  // Filter pets by search query
-  const filteredPets = useMemo(() => {
-    if (!searchQuery) return pets;
-    const query = searchQuery.toLowerCase();
-    return pets.filter(
-      (pet) =>
-        pet.name.toLowerCase().includes(query) ||
-        pet.breed.toLowerCase().includes(query) ||
-        pet.petType.toLowerCase().includes(query)
-    );
-  }, [pets, searchQuery]);
 
   const handleEdit = (pet: Pet) => {
     setSelectedPet(pet);
@@ -120,7 +108,7 @@ export function PetsPage() {
         </div>
       ) : (
         <PetsTable
-          pets={filteredPets}
+          pets={pets}
           onEdit={handleEdit}
           onDelete={handleDelete}
           isLoading={isLoading}

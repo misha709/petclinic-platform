@@ -65,7 +65,6 @@ app.MapDelete("/owners/{id:guid}", async (Guid id, IOwnerService service, Cancel
     var deleted = await service.DeleteAsync(id, ct);
     return deleted ? Results.NoContent() : Results.NotFound();
 })
-.WithName("DeleteOwner")
-.WithOpenApi();
+.WithName("DeleteOwner");
 
 app.Run();
