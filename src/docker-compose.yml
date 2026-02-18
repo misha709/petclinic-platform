@@ -13,6 +13,8 @@ services:
         condition: service_started
       pets-api:
         condition: service_started
+      vets-api:
+        condition: service_started
 
   owners-db:
     image: postgres:16-alpine
@@ -80,6 +82,39 @@ services:
       pets-db:
         condition: service_healthy
 
+  vets-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: petclinic_vets
+    ports:
+      - "5434:5432"
+    volumes:
+      - vets-pgdata:/var/lib/postgresql/data
+    networks:
+      - petclinic-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  vets-api:
+    build:
+      context: .
+      dockerfile: backend/vets/PetClinic.Vets.Api/Dockerfile
+    environment:
+      ConnectionStrings__VetsDb: "Host=vets-db;Port=5432;Database=petclinic_vets;Username=postgres;Password=postgres"
+      ASPNETCORE_URLS: "http://+:8080"
+    ports:
+      - "5082:8080"
+    networks:
+      - petclinic-network
+    depends_on:
+      vets-db:
+        condition: service_healthy
+
 networks:
   petclinic-network:
     driver: bridge
@@ -87,3 +122,4 @@ networks:
 volumes:
   owners-pgdata:
   pets-pgdata:
+  vets-pgdata:
