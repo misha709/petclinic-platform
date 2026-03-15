@@ -114,3 +114,40 @@ export interface CreateSpecializationRequest {
 export interface UpdateSpecializationRequest {
   name: string;
 }
+
+export type VisitStatus = 'Scheduled' | 'Completed' | 'Cancelled';
+
+export const VISIT_STATUSES: VisitStatus[] = ['Scheduled', 'Completed', 'Cancelled'];
+
+export interface Visit {
+  id: string;
+  petId: string;
+  vetId: string;
+  scheduledAt: string;
+  durationMinutes: number;
+  reason: string;
+  notes?: string;
+  status: VisitStatus;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface CreateVisitRequest {
+  petId: string;
+  vetId: string;
+  scheduledAt: string;
+  durationMinutes: number;
+  reason: string;
+  notes?: string;
+}
+
+export interface UpdateVisitRequest {
+  scheduledAt: string;
+  durationMinutes: number;
+  reason: string;
+  notes?: string;
+}
+
+export interface CancelVisitRequest {
+  notes?: string;
+}

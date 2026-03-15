@@ -1,4 +1,4 @@
-import type { Owner, CreateOwnerRequest, UpdateOwnerRequest, Pet, CreatePetRequest, UpdatePetRequest, Vet, CreateVetRequest, UpdateVetRequest, AssignSpecializationsRequest, Specialization, CreateSpecializationRequest, UpdateSpecializationRequest } from '@/types/models';
+import type { Owner, CreateOwnerRequest, UpdateOwnerRequest, Pet, CreatePetRequest, UpdatePetRequest, Vet, CreateVetRequest, UpdateVetRequest, AssignSpecializationsRequest, Specialization, CreateSpecializationRequest, UpdateSpecializationRequest, Visit, CreateVisitRequest, UpdateVisitRequest, CancelVisitRequest } from '@/types/models';
 
 const API_BASE = 'http://localhost:8080/api';
 
@@ -158,6 +158,55 @@ export const specializationsApi = {
 
   delete: async (id: number): Promise<void> => {
     await fetch(`${API_BASE}/vets-service/specializations/${id}`, {
+      method: 'DELETE',
+    });
+  },
+};
+
+// Visits API
+export const visitsApi = {
+  getAll: async (params?: { petId?: string; vetId?: string; date?: string; status?: string }): Promise<Visit[]> => {
+    const url = new URL(`${API_BASE}/visits-service/visits`);
+    if (params?.petId) url.searchParams.set('petId', params.petId);
+    if (params?.vetId) url.searchParams.set('vetId', params.vetId);
+    if (params?.date) url.searchParams.set('date', params.date);
+    if (params?.status) url.searchParams.set('status', params.status);
+    return fetchJson<Visit[]>(url.toString());
+  },
+
+  getById: async (id: string): Promise<Visit> => {
+    return fetchJson<Visit>(`${API_BASE}/visits-service/visits/${id}`);
+  },
+
+  create: async (data: CreateVisitRequest): Promise<Visit> => {
+    return fetchJson<Visit>(`${API_BASE}/visits-service/visits`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  update: async (id: string, data: UpdateVisitRequest): Promise<Visit> => {
+    return fetchJson<Visit>(`${API_BASE}/visits-service/visits/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+
+  cancel: async (id: string, data: CancelVisitRequest): Promise<Visit> => {
+    return fetchJson<Visit>(`${API_BASE}/visits-service/visits/${id}/cancel`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  complete: async (id: string): Promise<Visit> => {
+    return fetchJson<Visit>(`${API_BASE}/visits-service/visits/${id}/complete`, {
+      method: 'POST',
+    });
+  },
+
+  delete: async (id: string): Promise<void> => {
+    await fetch(`${API_BASE}/visits-service/visits/${id}`, {
       method: 'DELETE',
     });
   },

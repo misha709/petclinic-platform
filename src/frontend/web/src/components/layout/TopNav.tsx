@@ -15,6 +15,7 @@ export function TopNav({ onSearchClick }: TopNavProps) {
     { path: '/pets', label: 'Pets' },
     { path: '/vets', label: 'Vets' },
     { path: '/specializations', label: 'Specializations' },
+    { path: '/visits', label: 'Visits' },
     { path: '/login', label: 'Login' },
   ];
 
