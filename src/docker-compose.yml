@@ -17,6 +17,8 @@ services:
         condition: service_started
       visits-api:
         condition: service_started
+      notifications-api:
+        condition: service_started
 
   owners-db:
     image: postgres:16-alpine
@@ -142,6 +144,9 @@ services:
     environment:
       ConnectionStrings__VisitsDb: "Host=visits-db;Port=5432;Database=petclinic_visits;Username=postgres;Password=postgres"
       ASPNETCORE_URLS: "http://+:8080"
+      RabbitMq__Host: "rabbitmq"
+      RabbitMq__Username: "guest"
+      RabbitMq__Password: "guest"
     ports:
       - "5083:8080"
     networks:
@@ -149,6 +154,75 @@ services:
     depends_on:
       visits-db:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - petclinic-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  notifications-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: petclinic_notifications
+    ports:
+      - "5436:5432"
+    volumes:
+      - notifications-pgdata:/var/lib/postgresql/data
+    networks:
+      - petclinic-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  notifications-api:
+    build:
+      context: .
+      dockerfile: backend/notifications/PetClinic.Notifications.Api/Dockerfile
+    environment:
+      ASPNETCORE_URLS: "http://+:8080"
+      RabbitMq__Host: "rabbitmq"
+      RabbitMq__Username: "guest"
+      RabbitMq__Password: "guest"
+      Services__PetsApi: "http://pets-api:8080"
+      Services__OwnersApi: "http://owners-api:8080"
+      Smtp__Host: "mailpit"
+      Smtp__Port: "1025"
+      Smtp__FromAddress: "noreply@petclinic.local"
+      Smtp__FromName: "PetClinic"
+      Smtp__UseSsl: "false"
+    ports:
+      - "5084:8080"
+    networks:
+      - petclinic-network
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      owners-api:
+        condition: service_started
+      pets-api:
+        condition: service_started
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - petclinic-network
 
 networks:
   petclinic-network:
@@ -159,3 +233,4 @@ volumes:
   pets-pgdata:
   vets-pgdata:
   visits-pgdata:
+  notifications-pgdata:

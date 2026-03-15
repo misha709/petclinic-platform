@@ -7,10 +7,12 @@ namespace PetClinic.Visits.Application;
 public class VisitService : IVisitService
 {
     private readonly IVisitRepository _repository;
+    private readonly IVisitEventPublisher _eventPublisher;
 
-    public VisitService(IVisitRepository repository)
+    public VisitService(IVisitRepository repository, IVisitEventPublisher eventPublisher)
     {
         _repository = repository;
+        _eventPublisher = eventPublisher;
     }
 
     public async Task<VisitDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -50,6 +52,15 @@ public class VisitService : IVisitService
         };
 
         var created = await _repository.AddAsync(visit, cancellationToken);
+
+        await _eventPublisher.PublishVisitCreatedAsync(
+            created.Id,
+            created.PetId,
+            created.VetId,
+            created.ScheduledAt,
+            created.Reason,
+            cancellationToken);
+
         return MapToDto(created);
     }
 
