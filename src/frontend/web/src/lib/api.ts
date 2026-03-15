@@ -1,4 +1,4 @@
-import type { Owner, CreateOwnerRequest, UpdateOwnerRequest, Pet, CreatePetRequest, UpdatePetRequest, Vet, CreateVetRequest, UpdateVetRequest, AssignSpecializationsRequest, Specialization } from '@/types/models';
+import type { Owner, CreateOwnerRequest, UpdateOwnerRequest, Pet, CreatePetRequest, UpdatePetRequest, Vet, CreateVetRequest, UpdateVetRequest, AssignSpecializationsRequest, Specialization, CreateSpecializationRequest, UpdateSpecializationRequest } from '@/types/models';
 
 const API_BASE = 'http://localhost:8080/api';
 
@@ -136,5 +136,29 @@ export const specializationsApi = {
       ? `${API_BASE}/vets-service/specializations?query=${encodeURIComponent(searchQuery)}`
       : `${API_BASE}/vets-service/specializations`;
     return fetchJson<Specialization[]>(url);
+  },
+
+  getById: async (id: number): Promise<Specialization> => {
+    return fetchJson<Specialization>(`${API_BASE}/vets-service/specializations/${id}`);
+  },
+
+  create: async (data: CreateSpecializationRequest): Promise<Specialization> => {
+    return fetchJson<Specialization>(`${API_BASE}/vets-service/specializations`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  update: async (id: number, data: UpdateSpecializationRequest): Promise<Specialization> => {
+    return fetchJson<Specialization>(`${API_BASE}/vets-service/specializations/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+
+  delete: async (id: number): Promise<void> => {
+    await fetch(`${API_BASE}/vets-service/specializations/${id}`, {
+      method: 'DELETE',
+    });
   },
 };

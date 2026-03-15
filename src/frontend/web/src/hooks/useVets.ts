@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { vetsApi, specializationsApi } from '@/lib/api';
-import type { CreateVetRequest, UpdateVetRequest, AssignSpecializationsRequest } from '@/types/models';
+import type { CreateVetRequest, UpdateVetRequest, AssignSpecializationsRequest, CreateSpecializationRequest, UpdateSpecializationRequest } from '@/types/models';
 import { toast } from 'sonner';
 
 export function useVets(query?: string) {
@@ -84,6 +84,54 @@ export function useAssignSpecializations() {
     },
     onError: (error: Error) => {
       toast.error(`Failed to assign specializations: ${error.message}`);
+    },
+  });
+}
+
+export function useCreateSpecialization() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: CreateSpecializationRequest) => specializationsApi.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['specializations'] });
+      toast.success('Specialization created successfully');
+    },
+    onError: (error: Error) => {
+      toast.error(`Failed to create specialization: ${error.message}`);
+    },
+  });
+}
+
+export function useUpdateSpecialization() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: UpdateSpecializationRequest }) =>
+      specializationsApi.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['specializations'] });
+      toast.success('Specialization updated successfully');
+    },
+    onError: (error: Error) => {
+      toast.error(`Failed to update specialization: ${error.message}`);
+    },
+  });
+}
+
+export function useDeleteSpecialization() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => specializationsApi.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['specializations'] });
+      // Also invalidate vets since their embedded specializations may change
+      queryClient.invalidateQueries({ queryKey: ['vets'] });
+      toast.success('Specialization deleted successfully');
+    },
+    onError: (error: Error) => {
+      toast.error(`Failed to delete specialization: ${error.message}`);
     },
   });
 }

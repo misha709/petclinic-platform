@@ -106,3 +106,11 @@ export interface UpdateVetRequest {
 export interface AssignSpecializationsRequest {
   specializationIds: number[];
 }
+
+export interface CreateSpecializationRequest {
+  name: string;
+}
+
+export interface UpdateSpecializationRequest {
+  name: string;
+}
