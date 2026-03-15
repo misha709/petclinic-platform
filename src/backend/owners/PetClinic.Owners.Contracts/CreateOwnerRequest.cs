@@ -5,4 +5,5 @@ public record CreateOwnerRequest(
     string LastName,
     string Address,
     string City,
-    string Telephone);
+    string Telephone,
+    string Email);

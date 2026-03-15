@@ -27,7 +27,8 @@ public class OwnerRepository : IOwnerRepository
             .Where(o =>
                 EF.Functions.ILike(o.FirstName, $"%{term}%") ||
                 EF.Functions.ILike(o.LastName, $"%{term}%") ||
-                EF.Functions.ILike(o.Telephone, $"%{term}%"))
+                EF.Functions.ILike(o.Telephone, $"%{term}%") ||
+                (o.Email != null && EF.Functions.ILike(o.Email, $"%{term}%")))
             .OrderBy(o => o.LastName)
             .ThenBy(o => o.FirstName)
             .ToListAsync(cancellationToken);
@@ -51,6 +52,7 @@ public class OwnerRepository : IOwnerRepository
         existing.Address = owner.Address;
         existing.City = owner.City;
         existing.Telephone = owner.Telephone;
+        existing.Email = owner.Email;
         existing.UpdatedAt = owner.UpdatedAt;
 
         await _db.SaveChangesAsync(cancellationToken);

@@ -5,6 +5,7 @@ export interface Owner {
   address: string;
   city: string;
   telephone: string;
+  email: string;
   createdAt: string;
   updatedAt?: string;
 }
@@ -15,6 +16,7 @@ export interface CreateOwnerRequest {
   address: string;
   city: string;
   telephone: string;
+  email: string;
 }
 
 export interface UpdateOwnerRequest {
@@ -23,6 +25,7 @@ export interface UpdateOwnerRequest {
   address: string;
   city: string;
   telephone: string;
+  email: string;
 }
 
 export interface Pet {

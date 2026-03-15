@@ -16,12 +16,14 @@ public class OwnerConfiguration : IEntityTypeConfiguration<Owner>
         entity.Property(e => e.Address).HasColumnName("address").HasMaxLength(255).IsRequired();
         entity.Property(e => e.City).HasColumnName("city").HasMaxLength(100).IsRequired();
         entity.Property(e => e.Telephone).HasColumnName("telephone").HasMaxLength(50).IsRequired();
+        entity.Property(e => e.Email).HasColumnName("email").HasMaxLength(255);
         entity.Property(e => e.CreatedAt).HasColumnName("created_at");
         entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
         entity.Property(e => e.DeletedAt).HasColumnName("deleted_at");
 
         entity.HasIndex(e => new { e.LastName, e.FirstName });
         entity.HasIndex(e => e.Telephone);
+        entity.HasIndex(e => e.Email);
         entity.HasIndex(e => e.DeletedAt);
 
         // Global query filter to exclude soft-deleted records

@@ -7,5 +7,6 @@ public record OwnerDto(
     string Address,
     string City,
     string Telephone,
+    string? Email,
     DateTime CreatedAt,
     DateTime? UpdatedAt);

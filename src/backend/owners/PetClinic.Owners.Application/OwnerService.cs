@@ -34,6 +34,7 @@ public class OwnerService : IOwnerService
             Address = request.Address,
             City = request.City,
             Telephone = request.Telephone,
+            Email = request.Email.Trim(),
             CreatedAt = DateTime.UtcNow
         };
         var created = await _repository.AddAsync(owner, cancellationToken);
@@ -51,6 +52,7 @@ public class OwnerService : IOwnerService
         owner.Address = request.Address;
         owner.City = request.City;
         owner.Telephone = request.Telephone;
+        owner.Email = request.Email.Trim();
         owner.UpdatedAt = DateTime.UtcNow;
 
         var updated = await _repository.UpdateAsync(owner, cancellationToken);
@@ -70,6 +72,7 @@ public class OwnerService : IOwnerService
             owner.Address,
             owner.City,
             owner.Telephone,
+            owner.Email,
             owner.CreatedAt,
             owner.UpdatedAt);
 }

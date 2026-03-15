@@ -6,6 +6,7 @@ export const ownerSchema = z.object({
   address: z.string().min(1, 'Address is required').max(100, 'Address is too long'),
   city: z.string().min(1, 'City is required').max(50, 'City is too long'),
   telephone: z.string().min(10, 'Phone number must be at least 10 digits').max(20, 'Phone number is too long'),
+  email: z.email('Invalid email address').min(1, 'Email is required').max(255, 'Email is too long'),
 });
 
 export type OwnerFormValues = z.infer<typeof ownerSchema>;

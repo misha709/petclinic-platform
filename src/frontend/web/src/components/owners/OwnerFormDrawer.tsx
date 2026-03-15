@@ -40,6 +40,7 @@ export function OwnerFormDrawer({ open, onOpenChange, owner }: OwnerFormDrawerPr
       address: '',
       city: '',
       telephone: '',
+      email: '',
     },
   });
 
@@ -51,6 +52,7 @@ export function OwnerFormDrawer({ open, onOpenChange, owner }: OwnerFormDrawerPr
         address: owner.address,
         city: owner.city,
         telephone: owner.telephone,
+        email: owner.email ?? '',
       });
     } else {
       form.reset({
@@ -59,6 +61,7 @@ export function OwnerFormDrawer({ open, onOpenChange, owner }: OwnerFormDrawerPr
         address: '',
         city: '',
         telephone: '',
+        email: '',
       });
     }
   }, [owner, form]);
@@ -153,6 +156,20 @@ export function OwnerFormDrawer({ open, onOpenChange, owner }: OwnerFormDrawerPr
                   <FormLabel>Telephone</FormLabel>
                   <FormControl>
                     <Input placeholder="1234567890" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input type="email" placeholder="john.doe@example.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

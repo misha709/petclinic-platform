@@ -8,6 +8,7 @@ public class Owner
     public string Address { get; set; } = string.Empty;
     public string City { get; set; } = string.Empty;
     public string Telephone { get; set; } = string.Empty;
+    public string? Email { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }

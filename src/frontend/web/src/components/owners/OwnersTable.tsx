@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Pencil, Trash2, Eye } from 'lucide-react';
+import { Pencil, Trash2, Eye, Mail } from 'lucide-react';
 import { formatPhoneNumber } from '@/lib/utils';
 
 interface OwnersTableProps {
@@ -29,12 +29,14 @@ export function OwnersTable({ owners, onEdit, onDelete, onViewPets, isLoading }:
               <TableHead>Name</TableHead>
               <TableHead>City</TableHead>
               <TableHead>Telephone</TableHead>
+              <TableHead>Email</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {[...Array(3)].map((_, i) => (
               <TableRow key={i}>
+                <TableCell><div className="h-4 bg-muted animate-pulse rounded" /></TableCell>
                 <TableCell><div className="h-4 bg-muted animate-pulse rounded" /></TableCell>
                 <TableCell><div className="h-4 bg-muted animate-pulse rounded" /></TableCell>
                 <TableCell><div className="h-4 bg-muted animate-pulse rounded" /></TableCell>
@@ -63,6 +65,7 @@ export function OwnersTable({ owners, onEdit, onDelete, onViewPets, isLoading }:
             <TableHead>Name</TableHead>
             <TableHead>City</TableHead>
             <TableHead>Telephone</TableHead>
+            <TableHead>Email</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -74,6 +77,15 @@ export function OwnersTable({ owners, onEdit, onDelete, onViewPets, isLoading }:
               </TableCell>
               <TableCell>{owner.city}</TableCell>
               <TableCell>{formatPhoneNumber(owner.telephone)}</TableCell>
+              <TableCell>
+                <a
+                  href={`mailto:${owner.email}`}
+                  className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <Mail className="h-3 w-3" />
+                  {owner.email}
+                </a>
+              </TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
                   <Button
