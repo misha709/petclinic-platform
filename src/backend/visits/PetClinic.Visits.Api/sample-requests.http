@@ -1,0 +1,60 @@
+### PetClinic Visits API - Sample Requests
+
+@baseUrl = https://localhost:7224
+
+@petId = 00000000-0000-0000-0000-000000000001
+@vetId = 00000000-0000-0000-0000-000000000002
+@visitId = 00000000-0000-0000-0000-000000000000
+
+### Get API Info
+GET {{baseUrl}}/
+
+### Schedule a Visit
+POST {{baseUrl}}/visits
+Content-Type: application/json
+
+{
+  "petId": "{{petId}}",
+  "vetId": "{{vetId}}",
+  "scheduledAt": "2026-04-01T10:00:00Z",
+  "durationMinutes": 30,
+  "reason": "Annual checkup",
+  "notes": null
+}
+
+### Get Visit by ID
+GET {{baseUrl}}/visits/{{visitId}}
+
+### Get Visits by Pet
+GET {{baseUrl}}/visits?petId={{petId}}
+
+### Get Visits by Vet on a specific date
+GET {{baseUrl}}/visits?vetId={{vetId}}&date=2026-04-01
+
+### Get Scheduled Visits
+GET {{baseUrl}}/visits?status=Scheduled
+
+### Update Visit
+PUT {{baseUrl}}/visits/{{visitId}}
+Content-Type: application/json
+
+{
+  "scheduledAt": "2026-04-01T11:00:00Z",
+  "durationMinutes": 45,
+  "reason": "Annual checkup and vaccination",
+  "notes": "Bring previous records"
+}
+
+### Cancel Visit
+POST {{baseUrl}}/visits/{{visitId}}/cancel
+Content-Type: application/json
+
+{
+  "notes": "Owner requested cancellation"
+}
+
+### Complete Visit
+POST {{baseUrl}}/visits/{{visitId}}/complete
+
+### Delete Visit
+DELETE {{baseUrl}}/visits/{{visitId}}
