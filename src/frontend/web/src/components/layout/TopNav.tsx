@@ -13,6 +13,7 @@ export function TopNav({ onSearchClick }: TopNavProps) {
   const navItems = [
     { path: '/owners', label: 'Owners' },
     { path: '/pets', label: 'Pets' },
+    { path: '/vets', label: 'Vets' },
     { path: '/login', label: 'Login' },
   ];
 

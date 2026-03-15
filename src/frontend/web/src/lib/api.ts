@@ -1,4 +1,4 @@
-import type { Owner, CreateOwnerRequest, UpdateOwnerRequest, Pet, CreatePetRequest, UpdatePetRequest } from '@/types/models';
+import type { Owner, CreateOwnerRequest, UpdateOwnerRequest, Pet, CreatePetRequest, UpdatePetRequest, Vet, CreateVetRequest, UpdateVetRequest, AssignSpecializationsRequest, Specialization } from '@/types/models';
 
 const API_BASE = 'http://localhost:8080/api';
 
@@ -85,5 +85,56 @@ export const petsApi = {
     await fetch(`${API_BASE}/pets-service/pets/${id}`, {
       method: 'DELETE',
     });
+  },
+};
+
+// Vets API
+export const vetsApi = {
+  getAll: async (searchQuery?: string): Promise<Vet[]> => {
+    const url = searchQuery
+      ? `${API_BASE}/vets-service/vets?query=${encodeURIComponent(searchQuery)}`
+      : `${API_BASE}/vets-service/vets`;
+    return fetchJson<Vet[]>(url);
+  },
+
+  getById: async (id: string): Promise<Vet> => {
+    return fetchJson<Vet>(`${API_BASE}/vets-service/vets/${id}`);
+  },
+
+  create: async (data: CreateVetRequest): Promise<Vet> => {
+    return fetchJson<Vet>(`${API_BASE}/vets-service/vets`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  update: async (id: string, data: UpdateVetRequest): Promise<Vet> => {
+    return fetchJson<Vet>(`${API_BASE}/vets-service/vets/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+
+  delete: async (id: string): Promise<void> => {
+    await fetch(`${API_BASE}/vets-service/vets/${id}`, {
+      method: 'DELETE',
+    });
+  },
+
+  assignSpecializations: async (id: string, data: AssignSpecializationsRequest): Promise<Vet> => {
+    return fetchJson<Vet>(`${API_BASE}/vets-service/vets/${id}/specializations`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+};
+
+// Specializations API
+export const specializationsApi = {
+  getAll: async (searchQuery?: string): Promise<Specialization[]> => {
+    const url = searchQuery
+      ? `${API_BASE}/vets-service/specializations?query=${encodeURIComponent(searchQuery)}`
+      : `${API_BASE}/vets-service/specializations`;
+    return fetchJson<Specialization[]>(url);
   },
 };

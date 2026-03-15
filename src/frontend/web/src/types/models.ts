@@ -76,3 +76,33 @@ export const PET_TYPES: PetType[] = [
   'Reptile',
   'Other',
 ];
+
+export interface Specialization {
+  id: number;
+  name: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface Vet {
+  id: string;
+  firstName: string;
+  lastName: string;
+  specializations: Specialization[];
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface CreateVetRequest {
+  firstName: string;
+  lastName: string;
+}
+
+export interface UpdateVetRequest {
+  firstName: string;
+  lastName: string;
+}
+
+export interface AssignSpecializationsRequest {
+  specializationIds: number[];
+}
