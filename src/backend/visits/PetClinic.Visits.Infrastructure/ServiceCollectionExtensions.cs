@@ -21,20 +21,14 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IVisitRepository, VisitRepository>();
         services.AddScoped<IVisitEventPublisher, MassTransitVisitEventPublisher>();
 
-        var rabbitMqHost = configuration["RabbitMq:Host"] ?? "localhost";
-        var rabbitMqUser = configuration["RabbitMq:Username"] ?? "guest";
-        var rabbitMqPass = configuration["RabbitMq:Password"] ?? "guest";
-
         services.AddMassTransit(x =>
         {
-            x.UsingRabbitMq((ctx, cfg) =>
+            x.UsingAmazonSqs((ctx, cfg) =>
             {
-                cfg.Host(rabbitMqHost, "/", h =>
+                cfg.Host("eu-west-1", h =>
                 {
-                    h.Username(rabbitMqUser);
-                    h.Password(rabbitMqPass);
+                    //TODO 
                 });
-
                 cfg.ConfigureEndpoints(ctx);
             });
         });

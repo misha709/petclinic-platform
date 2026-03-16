@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="MailKit" Version="4.15.1" />
     <PackageReference Include="MassTransit.Quartz" Version="9.0.1" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="9.0.1" />
+    <PackageReference Include="MassTransit.AmazonSqs" Version="9.0.1" />
     <PackageReference Include="Quartz.Serialization.Json" Version="3.16.1" />
   </ItemGroup>
 

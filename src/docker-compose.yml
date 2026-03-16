@@ -157,19 +157,6 @@ services:
       rabbitmq:
         condition: service_healthy
 
-  rabbitmq:
-    image: rabbitmq:4-management
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    networks:
-      - petclinic-network
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-
   notifications-db:
     image: postgres:16-alpine
     environment:

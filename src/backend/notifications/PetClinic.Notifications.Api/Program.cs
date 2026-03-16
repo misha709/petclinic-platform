@@ -32,10 +32,6 @@ builder.Services.AddHealthChecks();
 builder.Services.AddQuartz();
 builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
-// MassTransit
-var rabbitMqHost = builder.Configuration["RabbitMq:Host"] ?? "localhost";
-var rabbitMqUser = builder.Configuration["RabbitMq:Username"] ?? "guest";
-var rabbitMqPass = builder.Configuration["RabbitMq:Password"] ?? "guest";
 
 builder.Services.AddMassTransit(x =>
 {
@@ -44,14 +40,12 @@ builder.Services.AddMassTransit(x =>
     x.AddConsumer<VisitCreatedConsumer>();
     x.AddConsumer<VisitReminderDueConsumer>();
 
-    x.UsingRabbitMq((ctx, cfg) =>
+    x.UsingAmazonSqs((ctx, cfg) =>
     {
-        cfg.Host(rabbitMqHost, "/", h =>
+        cfg.Host("eu-west-1", h =>
         {
-            h.Username(rabbitMqUser);
-            h.Password(rabbitMqPass);
+            //TODO 
         });
-
         cfg.ConfigureEndpoints(ctx);
     });
 });
