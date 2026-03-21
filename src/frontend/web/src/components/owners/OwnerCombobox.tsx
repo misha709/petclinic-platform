@@ -15,7 +15,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import type { Owner } from '@/types';
+import type { Owner } from '@/types/models';
 
 interface OwnerComboboxProps {
   owners: Owner[];

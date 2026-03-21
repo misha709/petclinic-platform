@@ -4,7 +4,7 @@ export const createVisitSchema = z.object({
   petId: z.string().uuid('Select a pet'),
   vetId: z.string().uuid('Select a vet'),
   scheduledAt: z.string().min(1, 'Schedule date and time is required'),
-  durationMinutes: z.coerce
+  durationMinutes: z
     .number()
     .int()
     .min(5, 'Minimum 5 minutes')

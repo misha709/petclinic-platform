@@ -27,7 +27,6 @@ import { useOwners } from '@/hooks/useOwners';
 import { PetTypeSelect } from './PetTypeSelect';
 import { OwnerCombobox } from '@/components/owners/OwnerCombobox';
 import { CalendarIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { format, parse, isValid } from 'date-fns';
 
 interface PetFormDrawerProps {

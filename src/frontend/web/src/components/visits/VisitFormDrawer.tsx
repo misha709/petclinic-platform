@@ -191,7 +191,14 @@ export function VisitFormDrawer({
                     <FormItem>
                       <FormLabel>Duration (minutes)</FormLabel>
                       <FormControl>
-                        <Input type="number" min={5} max={480} step={5} {...field} />
+                        <Input
+                          type="number"
+                          min={5}
+                          max={480}
+                          step={5}
+                          {...field}
+                          onChange={(e) => field.onChange(Number(e.target.value))}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -310,7 +317,14 @@ export function VisitFormDrawer({
                   <FormItem>
                     <FormLabel>Duration (minutes)</FormLabel>
                     <FormControl>
-                      <Input type="number" min={5} max={480} step={5} {...field} />
+                      <Input
+                        type="number"
+                        min={5}
+                        max={480}
+                        step={5}
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

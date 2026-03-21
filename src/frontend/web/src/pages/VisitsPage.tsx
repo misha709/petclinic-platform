@@ -16,7 +16,7 @@ import { DeleteVisitDialog } from '@/components/visits/DeleteVisitDialog';
 import { VetCombobox } from '@/components/visits/VetCombobox';
 import { useVisits, useCompleteVisit } from '@/hooks/useVisits';
 import { useVets } from '@/hooks/useVets';
-import type { Visit, VisitStatus } from '@/types/models';
+import type { Visit } from '@/types/models';
 
 const STATUS_OPTIONS: Array<{ value: string; label: string }> = [
   { value: 'all', label: 'All statuses' },
