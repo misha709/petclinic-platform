@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 export const createVisitSchema = z.object({
-  petId: z.string().uuid('Select a pet'),
-  vetId: z.string().uuid('Select a vet'),
+  petId: z.guid('Select a pet'),
+  vetId: z.guid('Select a vet'),
   scheduledAt: z.string().min(1, 'Schedule date and time is required'),
   durationMinutes: z
     .number()
