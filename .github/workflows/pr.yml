@@ -16,7 +16,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
+
       - uses: actions/setup-dotnet@v4
+      
       - name: SonarQube Scan
         env: { SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} }
         run: |
