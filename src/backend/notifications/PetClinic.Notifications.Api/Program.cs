@@ -1,7 +1,5 @@
-using Amazon.SQS;
-using MassTransit;
-using PetClinic.Notifications.Api.Consumers;
 using PetClinic.Notifications.Api.HttpClients;
+using PetClinic.Notifications.Api.Messaging;
 using PetClinic.Notifications.Api.Services;
 using Quartz;
 
@@ -33,31 +31,7 @@ builder.Services.AddHealthChecks();
 builder.Services.AddQuartz();
 builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
-
-builder.Services.AddMassTransit(x =>
-{
-    x.AddQuartzConsumers();
-
-    x.AddConsumer<VisitCreatedConsumer>();
-    x.AddConsumer<VisitReminderDueConsumer>();
-
-    x.UsingAmazonSqs((ctx, cfg) =>
-    {
-        var region = builder.Configuration["Aws:Region"] ?? "eu-west-1";
-        var serviceUrl = builder.Configuration["Aws:ServiceUrl"];
-        var accessKey = builder.Configuration["Aws:AccessKey"] ?? "dummy";
-        var secretKey = builder.Configuration["Aws:SecretKey"] ?? "dummy";
-
-        cfg.Host(region, h =>
-        {
-            h.AccessKey(accessKey);
-            h.SecretKey(secretKey);
-            if (!string.IsNullOrEmpty(serviceUrl))
-                h.Config(new AmazonSQSConfig { ServiceURL = serviceUrl });
-        });
-        cfg.ConfigureEndpoints(ctx);
-    });
-});
+builder.Services.AddMessaging(builder.Configuration);
 
 var app = builder.Build();
 

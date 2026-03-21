@@ -2,6 +2,7 @@ using PetClinic.Visits.Application;
 using PetClinic.Visits.Contracts;
 using PetClinic.Visits.Domain.Enums;
 using PetClinic.Visits.Infrastructure;
+using PetClinic.Visits.Infrastructure.Messaging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,7 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.Configure<AwsMessagingOptions>(builder.Configuration.GetSection("AwsMessaging")); // TODO move to infrastructure layer
 builder.Services.AddVisitsInfrastructure(builder.Configuration);
 builder.Services.AddScoped<IVisitService, VisitService>();
 
