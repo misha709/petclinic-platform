@@ -1,3 +1,4 @@
+using Amazon.SQS;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -25,9 +26,17 @@ public static class ServiceCollectionExtensions
         {
             x.UsingAmazonSqs((ctx, cfg) =>
             {
-                cfg.Host("eu-west-1", h =>
+                var region = configuration["Aws:Region"] ?? "eu-west-1";
+                var serviceUrl = configuration["Aws:ServiceUrl"];
+                var accessKey = configuration["Aws:AccessKey"] ?? "dummy";
+                var secretKey = configuration["Aws:SecretKey"] ?? "dummy";
+
+                cfg.Host(region, h =>
                 {
-                    //TODO 
+                    h.AccessKey(accessKey);
+                    h.SecretKey(secretKey);
+                    if (!string.IsNullOrEmpty(serviceUrl))
+                        h.Config(new AmazonSQSConfig { ServiceURL = serviceUrl });
                 });
                 cfg.ConfigureEndpoints(ctx);
             });

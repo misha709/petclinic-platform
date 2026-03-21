@@ -144,9 +144,10 @@ services:
     environment:
       ConnectionStrings__VisitsDb: "Host=visits-db;Port=5432;Database=petclinic_visits;Username=postgres;Password=postgres"
       ASPNETCORE_URLS: "http://+:8080"
-      RabbitMq__Host: "rabbitmq"
-      RabbitMq__Username: "guest"
-      RabbitMq__Password: "guest"
+      Aws__Region: "eu-west-1"
+      Aws__ServiceUrl: "http://elasticmq:9324"
+      Aws__AccessKey: "dummy"
+      Aws__SecretKey: "dummy"
     ports:
       - "5083:8080"
     networks:
@@ -154,8 +155,8 @@ services:
     depends_on:
       visits-db:
         condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
+      elasticmq:
+        condition: service_started
 
   notifications-db:
     image: postgres:16-alpine
@@ -181,9 +182,10 @@ services:
       dockerfile: backend/notifications/PetClinic.Notifications.Api/Dockerfile
     environment:
       ASPNETCORE_URLS: "http://+:8080"
-      RabbitMq__Host: "rabbitmq"
-      RabbitMq__Username: "guest"
-      RabbitMq__Password: "guest"
+      Aws__Region: "eu-west-1"
+      Aws__ServiceUrl: "http://elasticmq:9324"
+      Aws__AccessKey: "dummy"
+      Aws__SecretKey: "dummy"
       Services__PetsApi: "http://pets-api:8080"
       Services__OwnersApi: "http://owners-api:8080"
       Smtp__Host: "mailpit"
@@ -196,12 +198,31 @@ services:
     networks:
       - petclinic-network
     depends_on:
-      rabbitmq:
-        condition: service_healthy
+      elasticmq:
+        condition: service_started
       owners-api:
         condition: service_started
       pets-api:
         condition: service_started
+
+  elasticmq:
+    image: softwaremill/elasticmq-native:latest
+    ports:
+      - "9324:9324"
+      - "9325:9325"
+    networks:
+      - petclinic-network
+
+  web:
+    build:
+      context: ./frontend/web
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    networks:
+      - petclinic-network
+    depends_on:
+      - gateway
 
   mailpit:
     image: axllent/mailpit:latest

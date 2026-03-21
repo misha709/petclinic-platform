@@ -1,3 +1,4 @@
+using Amazon.SQS;
 using MassTransit;
 using PetClinic.Notifications.Api.Consumers;
 using PetClinic.Notifications.Api.HttpClients;
@@ -42,9 +43,17 @@ builder.Services.AddMassTransit(x =>
 
     x.UsingAmazonSqs((ctx, cfg) =>
     {
-        cfg.Host("eu-west-1", h =>
+        var region = builder.Configuration["Aws:Region"] ?? "eu-west-1";
+        var serviceUrl = builder.Configuration["Aws:ServiceUrl"];
+        var accessKey = builder.Configuration["Aws:AccessKey"] ?? "dummy";
+        var secretKey = builder.Configuration["Aws:SecretKey"] ?? "dummy";
+
+        cfg.Host(region, h =>
         {
-            //TODO 
+            h.AccessKey(accessKey);
+            h.SecretKey(secretKey);
+            if (!string.IsNullOrEmpty(serviceUrl))
+                h.Config(new AmazonSQSConfig { ServiceURL = serviceUrl });
         });
         cfg.ConfigureEndpoints(ctx);
     });
