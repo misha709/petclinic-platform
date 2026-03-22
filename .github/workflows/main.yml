@@ -52,30 +52,21 @@ jobs:
       - name: Build and push changed services
         run: |
           VERSION=${{ steps.version.outputs.version }}
-          ECR_PREFIX=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
-          DB_SERVICES="owners pets vets visits"
           for SERVICE in $(echo '${{ needs.detect-changes.outputs.services }}' | jq -r '.[]'); do
             if [ "$SERVICE" = "web" ]; then
               DOCKERFILE="src/frontend/web/Dockerfile"
               BUILD_CONTEXT="src/frontend/web"
-              TARGET="final"
             else
               DOCKERFILE=$(find src/backend/$SERVICE -name Dockerfile 2>/dev/null | head -1)
               BUILD_CONTEXT="src/"
-              TARGET="final"
             fi
             if [ -z "$DOCKERFILE" ] || [ ! -f "$DOCKERFILE" ]; then
               echo "No Dockerfile found for $SERVICE – skipping image build"
               continue
             fi
-            IMAGE=$ECR_PREFIX/petclinic/$SERVICE
-            docker build -f "$DOCKERFILE" --target $TARGET -t "$IMAGE:$VERSION" $BUILD_CONTEXT
+            IMAGE=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/petclinic/$SERVICE
+            docker build -f "$DOCKERFILE" -t "$IMAGE:$VERSION" $BUILD_CONTEXT
             docker push "$IMAGE:$VERSION"
-            if echo "$DB_SERVICES" | grep -qw "$SERVICE"; then
-              MIGRATE_IMAGE=$ECR_PREFIX/petclinic/$SERVICE-migrate
-              docker build -f "$DOCKERFILE" --target migrate -t "$MIGRATE_IMAGE:$VERSION" $BUILD_CONTEXT
-              docker push "$MIGRATE_IMAGE:$VERSION"
-            fi
           done
 
   update-infra-values:
