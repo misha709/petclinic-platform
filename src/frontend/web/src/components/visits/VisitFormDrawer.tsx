@@ -68,6 +68,13 @@ export function VisitFormDrawer({
   const { data: owners = [] } = useOwners();
 
   const [selectedOwnerId, setSelectedOwnerId] = useState('');
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (prevOpen !== open) {
+    setPrevOpen(open);
+    if (open && !visit) {
+      setSelectedOwnerId('');
+    }
+  }
   const { data: pets = [] } = usePets(selectedOwnerId || undefined);
 
   const isEditing = !!visit;
@@ -105,7 +112,6 @@ export function VisitFormDrawer({
         notes: visit.notes ?? '',
       });
     } else {
-      setSelectedOwnerId('');
       createForm.reset({
         petId: defaultPetId,
         vetId: defaultVetId,

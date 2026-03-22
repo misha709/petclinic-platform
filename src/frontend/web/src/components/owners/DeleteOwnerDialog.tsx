@@ -26,7 +26,7 @@ export function DeleteOwnerDialog({ open, onOpenChange, owner }: DeleteOwnerDial
     try {
       await deleteOwner.mutateAsync(owner.id);
       onOpenChange(false);
-    } catch (error) {
+    } catch {
       // Error handling is done in the mutation hook
     }
   };

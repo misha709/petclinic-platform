@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Plus, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -17,20 +17,10 @@ export function PetsPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
-  const [selectedOwnerId, setSelectedOwnerId] = useState<string>(
-    searchParams.get('ownerId') || ''
-  );
+  const selectedOwnerId = searchParams.get('ownerId') || '';
 
   const { data: owners = [] } = useOwners();
   const { data: pets = [], isLoading } = usePets(selectedOwnerId, searchQuery);
-
-  // Update selected owner when URL changes
-  useEffect(() => {
-    const ownerIdFromUrl = searchParams.get('ownerId');
-    if (ownerIdFromUrl) {
-      setSelectedOwnerId(ownerIdFromUrl);
-    }
-  }, [searchParams]);
 
   const handleEdit = (pet: Pet) => {
     setSelectedPet(pet);
@@ -55,7 +45,6 @@ export function PetsPage() {
   };
 
   const handleOwnerChange = (ownerId: string) => {
-    setSelectedOwnerId(ownerId);
     if (ownerId) {
       setSearchParams({ ownerId });
     } else {

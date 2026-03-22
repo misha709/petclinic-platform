@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ChangeEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -28,6 +28,87 @@ import { PetTypeSelect } from './PetTypeSelect';
 import { OwnerCombobox } from '@/components/owners/OwnerCombobox';
 import { CalendarIcon } from 'lucide-react';
 import { format, parse, isValid } from 'date-fns';
+
+interface BirthDateFieldProps {
+  value: Date | null;
+  onChange: (date: Date | null) => void;
+}
+
+function BirthDateField({ value, onChange }: BirthDateFieldProps) {
+  const [open, setOpen] = useState(false);
+  const [prevValue, setPrevValue] = useState(value);
+  const [inputValue, setInputValue] = useState(() =>
+    value ? format(value, 'MM/dd/yyyy') : ''
+  );
+
+  if (prevValue !== value) {
+    setPrevValue(value);
+    setInputValue(value ? format(value, 'MM/dd/yyyy') : '');
+  }
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    let raw = e.target.value.replace(/\D/g, '');
+    if (raw.length >= 2) raw = raw.slice(0, 2) + '/' + raw.slice(2);
+    if (raw.length >= 5) raw = raw.slice(0, 5) + '/' + raw.slice(5, 9);
+    setInputValue(raw);
+    if (raw.length === 10) {
+      const parsed = parse(raw, 'MM/dd/yyyy', new Date());
+      if (isValid(parsed) && parsed <= new Date() && parsed >= new Date('1900-01-01')) {
+        onChange(parsed);
+      }
+    } else if (raw.length === 0) {
+      onChange(null);
+    }
+  };
+
+  const handleCalendarSelect = (date: Date | undefined) => {
+    onChange(date ?? null);
+    setInputValue(date ? format(date, 'MM/dd/yyyy') : '');
+    setOpen(false);
+  };
+
+  return (
+    <FormItem className="flex flex-col">
+      <FormLabel>Birth Date</FormLabel>
+      <Popover open={open} onOpenChange={setOpen}>
+        <div className="relative">
+          <FormControl>
+            <Input
+              placeholder="MM/DD/YYYY"
+              value={inputValue}
+              onChange={handleInputChange}
+              maxLength={10}
+            />
+          </FormControl>
+          <PopoverTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="absolute right-0 top-0 h-full px-3"
+            >
+              <CalendarIcon className="h-4 w-4 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+        </div>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            mode="single"
+            captionLayout="dropdown"
+            selected={value || undefined}
+            onSelect={handleCalendarSelect}
+            disabled={(date: Date) =>
+              date > new Date() || date < new Date('1900-01-01')
+            }
+            startMonth={new Date()}
+            autoFocus
+          />
+        </PopoverContent>
+      </Popover>
+      <FormMessage />
+    </FormItem>
+  );
+}
 
 interface PetFormDrawerProps {
   open: boolean;
@@ -86,7 +167,7 @@ export function PetFormDrawer({ open, onOpenChange, pet, defaultOwnerId }: PetFo
       }
       onOpenChange(false);
       form.reset();
-    } catch (error) {
+    } catch {
       // Error handling is done in the mutation hooks
     }
   };
@@ -151,102 +232,9 @@ export function PetFormDrawer({ open, onOpenChange, pet, defaultOwnerId }: PetFo
             <FormField
               control={form.control}
               name="birthDate"
-              render={({ field }) => {
-                const [open, setOpen] = useState(false);
-                const [inputValue, setInputValue] = useState(() => 
-                  field.value ? format(field.value, 'MM/dd/yyyy') : ''
-                );
-
-                // Update input value when field value changes (e.g., when editing existing pet)
-                useEffect(() => {
-                  if (field.value) {
-                    setInputValue(format(field.value, 'MM/dd/yyyy'));
-                  } else {
-                    setInputValue('');
-                  }
-                }, [field.value]);
-
-                const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-                  let value = e.target.value.replace(/\D/g, '');
-                  
-                  // Apply mask MM/DD/YYYY
-                  if (value.length >= 2) {
-                    value = value.slice(0, 2) + '/' + value.slice(2);
-                  }
-                  if (value.length >= 5) {
-                    value = value.slice(0, 5) + '/' + value.slice(5, 9);
-                  }
-                  
-                  setInputValue(value);
-
-                  // Try to parse complete date
-                  if (value.length === 10) {
-                    const parsed = parse(value, 'MM/dd/yyyy', new Date());
-                    if (isValid(parsed)) {
-                      const today = new Date();
-                      const minDate = new Date('1900-01-01');
-                      if (parsed <= today && parsed >= minDate) {
-                        field.onChange(parsed);
-                      }
-                    }
-                  } else if (value.length === 0) {
-                    field.onChange(null);
-                  }
-                };
-
-                const handleCalendarSelect = (date: Date | undefined) => {
-                  field.onChange(date);
-                  if (date) {
-                    setInputValue(format(date, 'MM/dd/yyyy'));
-                  } else {
-                    setInputValue('');
-                  }
-                  setOpen(false);
-                };
-
-                return (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Birth Date</FormLabel>
-                    <Popover open={open} onOpenChange={setOpen}>
-                      <div className="relative">
-                        <FormControl>
-                          <Input
-                            placeholder="MM/DD/YYYY"
-                            value={inputValue}
-                            onChange={handleInputChange}
-                            maxLength={10}
-                          />
-                        </FormControl>
-                        <PopoverTrigger asChild>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="absolute right-0 top-0 h-full px-3"
-                          >
-                            <CalendarIcon className="h-4 w-4 opacity-50" />
-                          </Button>
-                        </PopoverTrigger>
-                      </div>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          captionLayout="dropdown"
-                          selected={field.value || undefined}
-                          onSelect={handleCalendarSelect}
-                          disabled={(date: Date) =>
-                            date > new Date() || date < new Date('1900-01-01')
-                          }
-                          fromYear={1900}
-                          toYear={new Date().getFullYear()}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                );
-              }}
+              render={({ field }) => (
+                <BirthDateField value={field.value || null} onChange={field.onChange} />
+              )}
             />
 
             <FormField

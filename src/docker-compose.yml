@@ -19,6 +19,8 @@ services:
         condition: service_started
       notifications-api:
         condition: service_started
+      web:
+        condition: service_started
 
   owners-db:
     image: postgres:16-alpine
@@ -226,12 +228,8 @@ services:
     build:
       context: ./frontend/web
       dockerfile: Dockerfile
-    ports:
-      - "5173:80"
     networks:
       - petclinic-network
-    depends_on:
-      - gateway
 
   mailpit:
     image: axllent/mailpit:latest

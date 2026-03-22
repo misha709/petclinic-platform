@@ -7,7 +7,7 @@ export const petSchema = z.object({
   }),
   breed: z.string().min(1, 'Breed is required').max(50, 'Breed is too long'),
   birthDate: z.date().optional().nullable(),
-  ownerId: z.uuidv4('Invalid owner ID'),
+  ownerId: z.guid('Invalid owner ID'),
 });
 
 export type PetFormValues = z.infer<typeof petSchema>;

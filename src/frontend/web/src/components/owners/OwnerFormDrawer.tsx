@@ -75,7 +75,7 @@ export function OwnerFormDrawer({ open, onOpenChange, owner }: OwnerFormDrawerPr
       }
       onOpenChange(false);
       form.reset();
-    } catch (error) {
+    } catch {
       // Error handling is done in the mutation hooks
     }
   };

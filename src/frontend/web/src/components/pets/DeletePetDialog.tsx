@@ -26,7 +26,7 @@ export function DeletePetDialog({ open, onOpenChange, pet }: DeletePetDialogProp
     try {
       await deletePet.mutateAsync(pet.id);
       onOpenChange(false);
-    } catch (error) {
+    } catch {
       // Error handling is done in the mutation hook
     }
   };
