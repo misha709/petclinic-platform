@@ -42,9 +42,9 @@ jobs:
       - name: Restore
         run: dotnet restore src/
       - name: Build ${{ matrix.service }}
-        run: dotnet build src/backend/${{ matrix.service }}/ --configuration Release --no-restore
+        run: dotnet build src/backend/${{ matrix.service }}/PetClinic.${{ matrix.service }}.Api/ --configuration Release --no-restore
       - name: Test ${{ matrix.service }}
-        run: dotnet test src/backend/${{ matrix.service }}/ --configuration Release --no-build --verbosity normal
+        run: dotnet test src/backend/${{ matrix.service }}/PetClinic.${{ matrix.service }}.Api/ --configuration Release --no-build --verbosity normal
 
   sonar:
     runs-on: ubuntu-latest
