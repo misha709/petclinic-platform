@@ -1,0 +1,99 @@
+name: Main Pipeline
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      services: ${{ steps.filter.outputs.changes }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d
+        id: filter
+        with:
+          filters: |
+            owners:
+              - 'src/backend/owners/**'
+            pets:
+              - 'src/backend/pets/**'
+            vets:
+              - 'src/backend/vets/**'
+            visits:
+              - 'src/backend/visits/**'
+            notifications:
+              - 'src/backend/notifications/**'
+            web:
+              - 'src/frontend/web/**'
+
+  tag-and-push:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.services != '[]'
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.semver.outputs.version }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Configure git identity
+        run: |
+          git config user.email "ci@petclinic.local"
+          git config user.name "CI Bot"
+
+      - id: semver
+        run: |
+          chmod +x scripts/bump_version.sh
+          echo "version=$(scripts/bump_version.sh)" >> $GITHUB_OUTPUT
+
+      - uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push changed services
+        run: |
+          VERSION=${{ steps.semver.outputs.version }}
+          for SERVICE in $(echo '${{ needs.detect-changes.outputs.services }}' | jq -r '.[]'); do
+            DOCKERFILE=$(find src/backend/$SERVICE -name Dockerfile 2>/dev/null | head -1)
+            if [ -z "$DOCKERFILE" ]; then
+              echo "No Dockerfile found for $SERVICE – skipping image build"
+              continue
+            fi
+            IMAGE=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/petclinic/$SERVICE
+            docker build -f "$DOCKERFILE" -t "$IMAGE:$VERSION" src/
+            docker push "$IMAGE:$VERSION"
+          done
+
+  update-infra-values:
+    needs: [detect-changes, tag-and-push]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          repository: <your-org>/petclinic-infrastructure
+          token: ${{ secrets.INFRA_REPO_TOKEN }}
+
+      - name: Install yq
+        run: |
+          wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          chmod +x /usr/local/bin/yq
+
+      - name: Update image tags for changed services only
+        run: |
+          VERSION=${{ needs.tag-and-push.outputs.version }}
+          for SERVICE in $(echo '${{ needs.detect-changes.outputs.services }}' | jq -r '.[]'); do
+            yq e ".images.$SERVICE.tag = \"$VERSION\"" -i helm/petclinic/values.yaml
+          done
+          git config user.email "ci@petclinic.local"
+          git config user.name "CI Bot"
+          git add helm/petclinic/values.yaml
+          git commit -m "chore: bump ${{ needs.detect-changes.outputs.services }} to ${{ needs.tag-and-push.outputs.version }}"
+          git push

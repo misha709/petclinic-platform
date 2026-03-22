@@ -1,6 +1,6 @@
 import type { Owner, CreateOwnerRequest, UpdateOwnerRequest, Pet, CreatePetRequest, UpdatePetRequest, Vet, CreateVetRequest, UpdateVetRequest, AssignSpecializationsRequest, Specialization, CreateSpecializationRequest, UpdateSpecializationRequest, Visit, CreateVisitRequest, UpdateVisitRequest, CancelVisitRequest } from '@/types/models';
 
-const API_BASE = 'http://localhost:8080/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '/api';
 
 async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
   const response = await fetch(url, {
@@ -56,11 +56,12 @@ export const ownersApi = {
 // Pet API
 export const petsApi = {
   getAll: async (ownerId?: string, query?: string): Promise<Pet[]> => {
-    const url = new URL(`${API_BASE}/pets-service/pets`);
-    if (ownerId && ownerId !== '-1') url.searchParams.set('ownerId', ownerId); // TODO review better way to handle this && ownerId !== '-1'
-    if (query) url.searchParams.set('query', query);
-
-    return fetchJson<Pet[]>(url.toString());
+    const searchParams = new URLSearchParams();
+    if (ownerId && ownerId !== '-1') searchParams.set('ownerId', ownerId); // TODO review better way to handle this && ownerId !== '-1'
+    if (query) searchParams.set('query', query);
+    const qs = searchParams.toString();
+    const url = `${API_BASE}/pets-service/pets${qs ? `?${qs}` : ''}`;
+    return fetchJson<Pet[]>(url);
   },
 
   getById: async (id: string): Promise<Pet> => {
@@ -166,12 +167,14 @@ export const specializationsApi = {
 // Visits API
 export const visitsApi = {
   getAll: async (params?: { petId?: string; vetId?: string; date?: string; status?: string }): Promise<Visit[]> => {
-    const url = new URL(`${API_BASE}/visits-service/visits`);
-    if (params?.petId) url.searchParams.set('petId', params.petId);
-    if (params?.vetId) url.searchParams.set('vetId', params.vetId);
-    if (params?.date) url.searchParams.set('date', params.date);
-    if (params?.status) url.searchParams.set('status', params.status);
-    return fetchJson<Visit[]>(url.toString());
+    const searchParams = new URLSearchParams();
+    if (params?.petId) searchParams.set('petId', params.petId);
+    if (params?.vetId) searchParams.set('vetId', params.vetId);
+    if (params?.date) searchParams.set('date', params.date);
+    if (params?.status) searchParams.set('status', params.status);
+    const qs = searchParams.toString();
+    const url = `${API_BASE}/visits-service/visits${qs ? `?${qs}` : ''}`;
+    return fetchJson<Visit[]>(url);
   },
 
   getById: async (id: string): Promise<Visit> => {

@@ -10,7 +10,7 @@ jobs:
       services: ${{ steps.filter.outputs.changes }}
     steps:
       - uses: actions/checkout@v5
-      - uses: dorny/paths-filter@v4
+      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d
         id: filter
         with:
           filters: |
@@ -24,16 +24,18 @@ jobs:
               - 'src/backend/visits/**'
             notifications:
               - 'src/backend/notifications/**'
-            gateway:
-              - 'src/backend/gateway/**'
+            web:
+              - 'src/frontend/web/**'
 
   test:
     needs: detect-changes
-    if: needs.detect-changes.outputs.services != '[]'
+    if: needs.detect-changes.outputs.services != '[]' && needs.detect-changes.outputs.services != '["web"]'
     runs-on: ubuntu-latest
     strategy:
       matrix:
         service: ${{ fromJson(needs.detect-changes.outputs.services) }}
+        exclude:
+          - service: web
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-dotnet@v5
@@ -49,6 +51,27 @@ jobs:
         run: |
           SERVICE="${{ matrix.service }}"
           dotnet test src/backend/$SERVICE/PetClinic.${SERVICE^}.Tests/ --configuration Release --verbosity normal
+
+  build-web:
+    needs: detect-changes
+    if: contains(fromJson(needs.detect-changes.outputs.services), 'web')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: src/frontend/web/package-lock.json
+      - name: Install
+        run: npm ci
+        working-directory: src/frontend/web
+      - name: Lint
+        run: npm run lint
+        working-directory: src/frontend/web
+      - name: Build
+        run: npm run build
+        working-directory: src/frontend/web
 
   sonar:
     runs-on: ubuntu-latest
