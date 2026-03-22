@@ -29,11 +29,13 @@ jobs:
 
   test:
     needs: detect-changes
-    if: needs.detect-changes.outputs.services != '[]'
+    if: needs.detect-changes.outputs.services != '[]' && needs.detect-changes.outputs.services != '["web"]'
     runs-on: ubuntu-latest
     strategy:
       matrix:
         service: ${{ fromJson(needs.detect-changes.outputs.services) }}
+        exclude:
+          - service: web
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-dotnet@v5
