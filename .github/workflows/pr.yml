@@ -1,48 +1,70 @@
 name: PR Pipeline
+
 on:
   pull_request:
 
 jobs:
-  test:
+  detect-changes:
     runs-on: ubuntu-latest
+    outputs:
+      services: ${{ steps.filter.outputs.changes }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
-        with: { dotnet-version: '10.0.x' }
-      - run: dotnet test src/ --configuration Release
+      - uses: actions/checkout@v5
+      - uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          filters: |
+            owners:
+              - 'src/backend/owners/**'
+            pets:
+              - 'src/backend/pets/**'
+            vets:
+              - 'src/backend/vets/**'
+            visits:
+              - 'src/backend/visits/**'
+            notifications:
+              - 'src/backend/notifications/**'
+            gateway:
+              - 'src/backend/gateway/**'
+
+  test:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.services != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: ${{ fromJson(needs.detect-changes.outputs.services) }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+      - name: Restore
+        run: dotnet restore src/
+      - name: Build ${{ matrix.service }}
+        run: |
+          SERVICE="${{ matrix.service }}"
+          dotnet build src/backend/$SERVICE/PetClinic.${SERVICE^}.Api/ --configuration Release --no-restore
+      - name: Test ${{ matrix.service }}
+        run: |
+          SERVICE="${{ matrix.service }}"
+          dotnet test src/backend/$SERVICE/PetClinic.${SERVICE^}.Tests/ --configuration Release --verbosity normal
 
   sonar:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
-      - uses: actions/setup-dotnet@v4
-      - name: SonarQube Scan
-        env: { SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} }
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+      - name: SonarCloud Analyze
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           dotnet tool install --global dotnet-sonarscanner
-          dotnet sonarscanner begin /k:"petclinic-platform" /o:"<org>" \
-            /d:sonar.token=$SONAR_TOKEN /d:sonar.host.url=https://sonarcloud.io
-          dotnet build src/
-          dotnet sonarscanner end /d:sonar.token=$SONAR_TOKEN
-
-  build-push:
-    needs: [test]
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        service: [owners, pets, vets, visits, notifications, gateway]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
-      - uses: aws-actions/amazon-ecr-login@v2
-      - name: Build and push
-        run: |
-          IMAGE=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-1.amazonaws.com/petclinic/${{ matrix.service }}
-          docker build -f src/backend/${{ matrix.service }}/PetClinic.*/Dockerfile \
-            -t $IMAGE:sha-${{ github.sha }} src/
-          docker push $IMAGE:sha-${{ github.sha }}
+          dotnet sonarscanner begin /k:"${{ vars.SONAR_PROJECT_KEY }}" /o:"${{ vars.SONAR_ORG }}" /d:sonar.token="$SONAR_TOKEN" /d:sonar.host.url="https://sonarcloud.io"
+          dotnet build src/ --configuration Release
+          dotnet test src/ --configuration Release --no-build --logger trx --collect:"XPlat Code Coverage"
+          dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
