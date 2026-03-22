@@ -17,7 +17,7 @@ The project is split across two repositories following infrastructure-as-code se
 
 ## Architecture at a Glance
 
-![General Architecture](images/general_architecture.png)
+![General Architecture](images/general_architecture.jpeg)
 
 ```
 Browser / Client
@@ -132,7 +132,7 @@ petclinic-infrastructure/
 
 ## CI/CD Pipelines
 
-![Dev Workflow](images/dev_workflow.png)
+![Dev Workflow](images/dev_workflow.jpeg)
 
 ### PR Pipeline (`.github/workflows/pr.yml`)
 
