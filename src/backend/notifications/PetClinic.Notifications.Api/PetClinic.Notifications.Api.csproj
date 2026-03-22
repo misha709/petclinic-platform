@@ -11,6 +11,7 @@
     <PackageReference Include="MassTransit" Version="8.5.8" />
     <PackageReference Include="MassTransit.Quartz" Version="8.5.8" />
     <PackageReference Include="MassTransit.AmazonSqs" Version="8.5.8" />
+    <PackageReference Include="AWSSDK.SecurityToken" Version="4.0.5.13" />
     <PackageReference Include="Quartz.Serialization.Json" Version="3.16.1" />
   </ItemGroup>
 
