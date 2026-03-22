@@ -17,6 +17,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddOwnersInfrastructure(builder.Configuration);
 builder.Services.AddScoped<IOwnerService, OwnerService>();
 
+builder.Services.AddHealthChecks();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -45,6 +47,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowAll");
 
+app.MapHealthChecks("/health");
 app.MapGet("/", () => "PetClinic Owners API");
 
 app.MapGet("/owners/{id:guid}", async (Guid id, IOwnerService service, CancellationToken ct) =>

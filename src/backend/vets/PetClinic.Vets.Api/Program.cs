@@ -18,6 +18,8 @@ builder.Services.AddVetsInfrastructure(builder.Configuration);
 builder.Services.AddScoped<IVetService, VetService>();
 builder.Services.AddScoped<ISpecializationService, SpecializationService>();
 
+builder.Services.AddHealthChecks();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -46,6 +48,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowAll");
 
+app.MapHealthChecks("/health");
 app.MapGet("/", () => "PetClinic Vets API");
 
 app.MapGet("/vets/{id:guid}", async (Guid id, IVetService service, CancellationToken ct) =>

@@ -20,6 +20,8 @@ builder.Services.Configure<AwsMessagingOptions>(builder.Configuration.GetSection
 builder.Services.AddVisitsInfrastructure(builder.Configuration);
 builder.Services.AddScoped<IVisitService, VisitService>();
 
+builder.Services.AddHealthChecks();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -48,6 +50,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowAll");
 
+app.MapHealthChecks("/health");
 app.MapGet("/", () => "PetClinic Visits API");
 
 app.MapGet("/visits/{id:guid}", async (Guid id, IVisitService service, CancellationToken ct) =>

@@ -17,6 +17,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddPetsInfrastructure(builder.Configuration);
 builder.Services.AddScoped<IPetService, PetService>();
 
+builder.Services.AddHealthChecks();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -45,6 +47,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowAll");
 
+app.MapHealthChecks("/health");
 app.MapGet("/", () => "PetClinic Pets API");
 
 app.MapGet("/pets/{id:guid}", async (Guid id, IPetService service, CancellationToken ct) =>
