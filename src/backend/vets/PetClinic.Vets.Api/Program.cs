@@ -1,6 +1,8 @@
+using Microsoft.EntityFrameworkCore;
 using PetClinic.Vets.Application;
 using PetClinic.Vets.Contracts;
 using PetClinic.Vets.Infrastructure;
+using PetClinic.Vets.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +22,21 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<VetsDbContext>();
+    try
+    {
+        db.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogCritical(ex, "Database migration failed. Shutting down.");
+        throw;
+    }
+}
 
 if (app.Environment.IsDevelopment())
 {
