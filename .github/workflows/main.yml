@@ -35,21 +35,12 @@ jobs:
     if: needs.detect-changes.outputs.services != '[]'
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.semver.outputs.version }}
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Configure git identity
-        run: |
-          git config user.email "ci@petclinic.local"
-          git config user.name "CI Bot"
 
-      - id: semver
-        run: |
-          chmod +x scripts/bump_version.sh
-          echo "version=$(scripts/bump_version.sh)" >> $GITHUB_OUTPUT
+      - id: version
+        run: echo "version=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
       - uses: aws-actions/configure-aws-credentials@v6
         with:
@@ -60,7 +51,7 @@ jobs:
 
       - name: Build and push changed services
         run: |
-          VERSION=${{ steps.semver.outputs.version }}
+          VERSION=${{ steps.version.outputs.version }}
           for SERVICE in $(echo '${{ needs.detect-changes.outputs.services }}' | jq -r '.[]'); do
             if [ "$SERVICE" = "web" ]; then
               DOCKERFILE="src/frontend/web/Dockerfile"
