@@ -48,7 +48,7 @@ jobs:
       - name: Test ${{ matrix.service }}
         run: |
           SERVICE="${{ matrix.service }}"
-          dotnet test src/backend/$SERVICE/PetClinic.${SERVICE^}.Tests/ --configuration Release --no-build --verbosity normal
+          dotnet test src/backend/$SERVICE/PetClinic.${SERVICE^}.Tests/ --configuration Release --verbosity normal
 
   sonar:
     runs-on: ubuntu-latest
