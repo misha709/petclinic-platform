@@ -27,8 +27,8 @@ jobs:
               - 'src/backend/visits/**'
             notifications:
               - 'src/backend/notifications/**'
-            gateway:
-              - 'src/backend/gateway/**'
+            web:
+              - 'src/frontend/web/**'
 
   tag-and-push:
     needs: detect-changes
