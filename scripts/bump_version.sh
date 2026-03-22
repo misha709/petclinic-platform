@@ -9,7 +9,7 @@ latest=$(git tag --sort=-version:refname \
   | grep -E '^v?[0-9]+\.[0-9]+\.[0-9]+$' \
   | head -1)
 
-if [ -z "$latest" ]; then
+if [[ -z "$latest" ]]; then
   major=0; minor=0; patch=0
 else
   version="${latest#v}"
