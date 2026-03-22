@@ -78,7 +78,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
-          repository: <your-org>/petclinic-infrastructure
+          repository: ${{ vars.INFRA_REPO_URL }}
           token: ${{ secrets.INFRA_REPO_TOKEN }}
 
       - name: Install yq
