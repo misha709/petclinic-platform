@@ -48,7 +48,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowAll");
 
 app.MapHealthChecks("/health");
-app.MapGet("/", () => "PetClinic Pets API");
+app.MapGet("/", () => "PetClinic Pets API [RD]");
 
 app.MapGet("/pets/{id:guid}", async (Guid id, IPetService service, CancellationToken ct) =>
 {
